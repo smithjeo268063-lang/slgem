@@ -1,0 +1,23 @@
+@import "tailwindcss";
+
+:root {
+  color-scheme: light;
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-candara-normal);
+  --font-mono: var(--font-geist-mono);
+  --font-bold-italic-font: var(--font-candara-bold-italic);
+  --font-bold-font: var(--font-candara-bold);
+  --font-italic-font: var(--font-candara-italic);
+  --font-normal-font: var(--font-candara-normal);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+}
