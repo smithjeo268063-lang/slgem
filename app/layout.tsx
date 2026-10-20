@@ -5,6 +5,7 @@ import { Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Footer from "@/components/footer";
 import Header from "@/components/header";
+import PageMotion from "@/components/page-motion";
 
 const boldItalicFont = localFont({
   src: "../public/fonts/Candara_Bold_Italic.ttf",
@@ -52,10 +53,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <Suspense fallback={null}>
           <Header />
         </Suspense>
-        {children}
-        <footer>
+        <PageMotion>
+          {children}
           <Footer />
-        </footer>
+        </PageMotion>
       </body>
     </html>
   );

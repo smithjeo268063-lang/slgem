@@ -28,7 +28,7 @@ export default function EventsPage() {
         <h1 className="text-[32px] font-bold-font capitalize leading-[1.12] tracking-normal sm:text-[56px] sm:leading-[1.08] lg:text-[clamp(56px,6.25vw,96px)] lg:leading-[1.1] lg:py-25">
           Every Department Exists For <br /> One - Purpose - Souls
         </h1>
-        <div className="mt-6 flex flex-wrap items-center gap-2.5 sm:mt-10 sm:gap-4 lg:gap-8">
+        <div className="mt-7 mb-1 md:flex w-full grid grid-cols-[1fr_1fr_1fr]  md:flex-wrap items-center gap-2.5 sm:mt-10 sm:gap-4 lg:gap-8">
           {filters.map((filter) => {
             const isActive = activeFilter === filter.value;
 
@@ -38,7 +38,7 @@ export default function EventsPage() {
                 type="button"
                 onClick={() => setActiveFilter(filter.value)}
                 aria-pressed={isActive}
-                className={`flex h-11 shrink-0 items-center justify-center rounded-[18px] border border-black px-4 text-base font-semibold leading-none transition-colors duration-200 sm:h-12 sm:px-6 sm:text-lg lg:h-13.75 lg:px-9 lg:text-[24px] ${
+                className={`flex h-10 ] shrink-0 tracking-wider items-center justify-center rounded-[18px] border border-black px-4 text-base font-semibold leading-none transition-colors duration-200 sm:h-12 sm:px-6 sm:text-lg lg:h-13.75 lg:px-9 lg:text-[24px] ${
                   isActive
                     ? "bg-[#08076f] text-white"
                     : "bg-transparent text-black hover:bg-gray-100"
@@ -78,7 +78,7 @@ export default function EventsPage() {
 
                 {/* Event information */}
                 <div className="flex min-w-0 flex-col items-start">
-                  <p className="mb-4 text-[16px] font-normal leading-[1.4] text-[#3f3f3f] sm:mb-6 sm:text-base">
+                  <p className="mb-4 text-[15px] font-normal leading-[1.4] text-[#3f3f3f] sm:mb-6 sm:text-base">
                     {event.dateFrom} - {event.dateTo}
                   </p>
 
@@ -86,7 +86,7 @@ export default function EventsPage() {
                     {event.title}
                   </h2>
 
-                  <p className="mb-4 text-[19px] font-normal leading-[1.65] text-[#6b6b6b] sm:text-base sm:leading-[1.6]">
+                  <p className="mb-4 text-[18px] font-normal leading-[1.65] text-[#6b6b6b] sm:text-base sm:leading-[1.6]">
                     {event.description}
                   </p>
 

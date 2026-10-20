@@ -154,7 +154,7 @@ export default function Hero() {
                 <p
                   className="
               m-0
-              text-[20px] leading-[26px] font-thin text-center lg:text-start
+              text-[18px] leading-[26px] font-thin text-center lg:text-start
               font-semibold
               lg:leading-[32px]
               tracking-[0px]
@@ -271,7 +271,7 @@ export default function Hero() {
                     <h3 className="text-[#9EA2AE] text-[20px] font-bold-font">
                       {mission?.sort_order}
                     </h3>
-                    <p className="text-[19px] leading-[28px] lg:text-[22px] leading-[30px] font-normal-font text-[#000000]">
+                    <p className="text-[18px] leading-[28px] lg:text-[22px] leading-[30px] font-normal-font text-[#000000]">
                       {mission.description}
                     </p>
                   </motion.div>
@@ -317,7 +317,7 @@ export default function Hero() {
                     Evangelistic Outreaches & Missions
                   </h2>
 
-                  <p className="text-[19px] lg:leading-[28px] leading-[28px] font-normal-font text-white">
+                  <p className="text-[18px] lg:leading-[28px] leading-[26px] font-normal-font text-white">
                     We go wherever God sends us, presenting the gospel to the
                     lost where they are — and working with local churches to
                     disciple every soul we win. Where there&apos;s no church, we
@@ -335,7 +335,7 @@ export default function Hero() {
                     Church Revival
                   </h2>
 
-                  <p className="text-[19px] lg:leading-[28px] leading-[28px] font-normal-font text-white">
+                  <p className="text-[18px] lg:leading-[28px] leading-[26px] font-normal-font text-white">
                     Camp meetings, discipleship training, books, and teaching
                     materials that bring the Church to maturity in the
                     fundamental truths of the gospel — and in the practice of
@@ -358,7 +358,7 @@ export default function Hero() {
                     Social Missions
                   </h2>
 
-                  <p className="text-[19px] lg:leading-[28px] leading-[28px] font-normal-font text-white">
+                  <p className="text-[18px] lg:leading-[28px] leading-[26px] font-normal-font text-white">
                     Meeting physical and emotional needs — food, clothing,
                     medical care, education — for those neglected by society.
                     Our free missions school at Ekhoenoguokhian, launched in
@@ -377,7 +377,7 @@ export default function Hero() {
                     Intercessory Army
                   </h2>
 
-                  <p className="text-[19px] lg:leading-[28px] leading-[28px] font-normal-font text-white">
+                  <p className="text-[18px] lg:leading-[28px] leading-[26px] font-normal-font text-white">
                     An army of intercessors on their knees for the lost —
                     praying souls into the Kingdom, praying for the end-time
                     revival, and standing in the gap three times a week.
@@ -393,7 +393,7 @@ export default function Hero() {
                     Intercessory Army
                   </h2>
 
-                  <p className="text-[19px] lg:leading-[28px] leading-[28px] font-normal-font text-white">
+                  <p className="text-[18px] lg:leading-[28px] leading-[26px] font-normal-font text-white">
                     An army of intercessors on their knees for the lost —
                     praying souls into the Kingdom, praying for the end-time
                     revival, and standing in the gap three times a week.
@@ -415,7 +415,7 @@ export default function Hero() {
                     Believers Bible Institute
                   </h2>
 
-                  <p className="text-[19px] lg:leading-[28px] leading-[28px] font-normal-font text-white">
+                  <p className="text-[18px] lg:leading-[28px] leading-[26px] font-normal-font text-white">
                     A free Bible school equipping believers — not just ministers
                     — with everything they need to walk in and enjoy all that
                     belongs to them in Christ.
@@ -431,7 +431,7 @@ export default function Hero() {
                     Children & Teens Outreach
                   </h2>
 
-                  <p className="text-[19px] lg:leading-[28px] leading-[28px] font-normal-font text-white">
+                  <p className="text-[18px] lg:leading-[28px] leading-[26px] font-normal-font text-white">
                     Recruit them young into the Lord&apos;s Army. Bibles,
                     materials, and outreach designed to root children and teens
                     in Christ early — including over 300 free bibles distributed
@@ -465,7 +465,7 @@ export default function Hero() {
                   <span className="text-[#FDAF00]">Changing Lives</span>
                 </h1>
 
-                <p className=" text-[19px] lg:text-[20px] leading-[28px] lg:leading-[28px] font-normal-font text-[#000000]">
+                <p className=" text-[18px] lg:text-[20px] leading-[28px] lg:leading-[28px] font-normal-font text-[#000000]">
                   Every message we teach is built on one foundation: the
                   fundamental truths of the gospel, taught in simplicity and
                   power, so believers can walk in love and live victoriously.
@@ -520,13 +520,13 @@ export default function Hero() {
                   </span>
                 </h1>
 
-                <p className="text-[19px] lg:text-[20px] leading-[28px] lg:leading-[28px] font-normal-font text-[#000000]">
+                <p className="text-[18px] lg:text-[20px] leading-[28px] lg:leading-[28px] font-normal-font text-[#000000]">
                   From our weekly teaching meetings to our annual camp meeting
                   and partners conference, there&apos;s always a place to
                   gather, grow, and go with us.
                 </p>
 
-                <a
+                <Link
                   href="/events"
                   className="text-[#000] flex gap-4 items-center font-bold text-[15px] lg:text-[16px]"
                 >
@@ -543,7 +543,7 @@ export default function Hero() {
                   >
                     →
                   </span>
-                </a>
+                </Link>
               </div>
 
               <div className="w-full lg:w-[42%] overflow-hidden rounded-[16px] h-[220px] lg:h-[330px]">
@@ -575,7 +575,7 @@ export default function Hero() {
                   <span className="text-[#FDAF00]">Changing Lives</span>
                 </h1>
 
-                <p className="text-[19px] lg:text-[20px] leading-[28px] lg:leading-[28px] font-normal-font text-[#000000]">
+                <p className="text-[18px] lg:text-[20px] leading-[28px] lg:leading-[28px] font-normal-font text-[#000000]">
                   Every message we teach is built on one foundation: the
                   fundamental truths of the gospel, taught in simplicity and
                   power, so believers can walk in love and live victoriously.
@@ -636,7 +636,7 @@ export default function Hero() {
                   </span>
                 </h1>
 
-                <p className="text-[19px] lg:text-[21px] leading-[28px] lg:leading-[32px] font-normal-font text-[#000000]">
+                <p className="text-[18px] lg:text-[21px] leading-[28px] lg:leading-[32px] font-normal-font text-[#000000]">
                   From our first crusade at the Rubber Research Institute of
                   Nigeria to missions in Iguoriakhi, Okoro, Amienghomwan, and
                   Ekhoenoguokhian — and international outreach across Para and
@@ -689,7 +689,7 @@ export default function Hero() {
                 </span>
               </h1>
 
-              <p className="text-[19px] lg:text-[21px] leading-[26px]lg:leading-[32px] font-normal-font text-[#000000]">
+              <p className="text-[18px] lg:text-[21px] leading-[26px]lg:leading-[32px] font-normal-font text-[#000000]">
                 You don&apos;t have to go into the field to be part of this.
                 Partnership with SLGEM means combining resources — spiritual,
                 material, or time — toward a common goal.

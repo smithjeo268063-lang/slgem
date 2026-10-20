@@ -141,10 +141,18 @@ const Header = () => {
                           key={index}
                           href={item.href}
                           onClick={closeMenus}
-                          className="block rounded-md px-4 py-3 text-[15px] transition-colors hover:bg-[#F2F5F8]"
+                          aria-current={
+                            isActiveLink(item.href) ? "page" : undefined
+                          }
+                          className={`block rounded-md px-4 py-3 text-[15px] transition-colors hover:bg-[#F2F5F8] ${
+                            isActiveLink(item.href)
+                              ? "bg-[#F2F5F8] font-semibold"
+                              : ""
+                          }`}
                         >
                           {item.label}
                         </Link>
+                        
                       ))}
                     </motion.div>
                   )}
@@ -256,7 +264,14 @@ const Header = () => {
                         key={index}
                         href={item.href}
                         onClick={closeMenus}
-                        className="block py-2 text-[18px] text-[#0A1931]/75"
+                        aria-current={
+                          isActiveLink(item.href) ? "page" : undefined
+                        }
+                        className={`block py-2 text-[18px] ${
+                          isActiveLink(item.href)
+                            ? "font-semibold text-[#0A1931]"
+                            : "text-[#0A1931]/75"
+                        }`}
                       >
                         {item.label}
                       </Link>

@@ -86,7 +86,7 @@ export default function DonationForm() {
 
         <button
           type="submit"
-          className="mt-[22px] flex h-[62px] lg:h-[78px] w-full items-center justify-center rounded-full bg-[#0E004E] px-[0px] text-center text-[18px] font-bold leading-[30px] tracking-[0.7px] text-white transition-all duration-300 hover:bg-[#130066] active:scale-[0.99]"
+          className="mt-[12px] lg:mt-[22px] flex h-[62px] lg:h-[78px] w-full items-center justify-center rounded-full bg-[#0E004E] px-[0px] text-center text-[16px] md:text-[18px] font-bold leading-[30px] tracking-[0.7px] text-white transition-all duration-300 hover:bg-[#130066] active:scale-[0.99]"
         >
           GIVE TO BLESS LIVES
         </button>

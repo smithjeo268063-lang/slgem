@@ -285,7 +285,7 @@ export default function What_We_Do() {
                 >
                   <span
                     className={`
-                      min-w-0 flex-1 text-[22px]
+                      min-w-0 flex-1 text-[20px]
                       font-[700] leading-[1.35] tracking-[0px]
                       text-[#080808]
                       ${isActive ? "hidden" : "block"}
@@ -308,7 +308,7 @@ export default function What_We_Do() {
                       <h2
                         className="
                           mt-[12px] mb-0 w-full
-                          text-[clamp(42px,10vw,84px)] font-[700]
+                          text-[clamp(32px,8vw,84px)] font-[700]
                           leading-[1.2] tracking-[0px] text-[#050505]
                         "
                       >
@@ -349,7 +349,7 @@ export default function What_We_Do() {
                       <div className="w-full pb-[20px]">
                         <div
                           className="
-                            relative mt-2 aspect-[1.69/1] h-[230px] w-full
+                            relative mt-2 aspect-[1.69/1] h-[220px] w-full
                             overflow-hidden rounded-[26px]
                           "
                         >
@@ -366,7 +366,7 @@ export default function What_We_Do() {
                         <p
                           className="
                             m-0 mt-[30px] w-full
-                            text-[clamp(22px,4.4vw,30px)] font-[400]
+                            text-[clamp(18px,4.4vw,30px)] font-[400]
                             leading-[1.52] tracking-[-0.65px] text-[#111111]
                           "
                         >

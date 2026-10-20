@@ -102,13 +102,13 @@ const MissionPage = () => {
           {...sectionReveal}
           className="
     relative
-    lg:h-[600px] h-[480px]
+    lg:h-[600px] h-[380px]
     w-full
    
     overflow-hidden
     bg-[#151720]
         lg:px-20 px-4 
-        lg:py-36 pt-46 pb-20
+        lg:py-36 pt-46 pb-10
   "
         >
           {/* Background Image */}
@@ -153,7 +153,7 @@ const MissionPage = () => {
               className="
             m-0
             max-w-full
-            text-[40px]
+            text-[36px]
             font-bold leading-[50px]
             lg:leading-[110px] text-start lg:text-start
             tracking-[0px]
@@ -277,7 +277,7 @@ const MissionPage = () => {
                       m-0
                         lg:mt-[26px] mt-[10px]
                       max-w-[95%]
-                      text-[20px]
+                      text-[18px]
                       font-[400]
                       leading-[1.5]
                       
@@ -331,7 +331,7 @@ const MissionPage = () => {
                           <p
                             className="
                           m-0
-                          text-[24px]
+                          text-[22px]
                           font-[700]
                           leading-[1.2]
                           tracking-[-0.8px]
@@ -346,7 +346,7 @@ const MissionPage = () => {
                             className="
                           m-0
                           shrink-0
-                          text-[24px]
+                          text-[22px]
                           font-[700]
                           leading-[1.2]
                           tracking-[-0.8px]
@@ -375,7 +375,7 @@ const MissionPage = () => {
                       bg-transparent
                       p-0
                       text-left
-                      text-[18px]
+                      text-[16px]
                       font-[700]
                       leading-none
                       tracking-[0px]
@@ -413,7 +413,7 @@ const MissionPage = () => {
           className="w-full lg:px-10 px-4 lg:pt-4 pb-18 lg:pb-30 gap-10 flex flex-col"
         >
           <div>
-            <p className="lg:text-[56px] text-[36px] leading-[48px] lg:leading-[72px] font-bold-font text-center">
+            <p className="lg:text-[56px] text-[28px] leading-[48px] lg:leading-[72px] font-bold-font text-center">
               <span className="text-[#000000]">
                 There are still communities without hopе.
               </span>{" "}
@@ -426,7 +426,7 @@ const MissionPage = () => {
           </div>
 
           <div>
-            <p className="lg:text-[56px] text-[36px] leading-[48px] lg:leading-[72px] font-bold-font text-center">
+            <p className="lg:text-[56px] text-[28px] leading-[48px] lg:leading-[72px] font-bold-font text-center">
               <span className="text-[#000000]">
                 And we believe the Church must not stay silent.
               </span>{" "}
@@ -461,10 +461,10 @@ const MissionPage = () => {
           </nav>
 
           <div>
-            <h2 className="text-center text-[24px] lg:text-[28px] lg:mt-20 mt-12">
+            <h2 className="text-center text-[20px] lg:text-[28px] lg:mt-20 mt-12">
               WHAT WE DO
             </h2>
-            <p className="lg:text-[64px] lg:mt-0 mt-5 text-[36px] leading-[48px] lg:leading-[72px] font-bold-font text-center">
+            <p className="lg:text-[64px] lg:mt-0 mt-5 text-[28px] leading-[48px] lg:leading-[72px] font-bold-font text-center">
               <span className="text-[#000000]">
                 We go into communities, streets,
               </span>{" "}
@@ -496,7 +496,7 @@ const MissionPage = () => {
               <h2
                 className="
             order-1
-            m-0 text-[24px]
+            m-0 text-[22px]
             lg:text-[28px]
             font-[700]
             leading-[1.2]
@@ -509,7 +509,7 @@ const MissionPage = () => {
                 className="
           order-3
           m-0
-            mt-0 lg:mt-[20px] text-[20px]
+            mt-0 lg:mt-[20px] text-[18px]
             lg:text-[38px]
             font-[400]
             lg:leading-[50px] leading-[28px]
@@ -544,7 +544,7 @@ const MissionPage = () => {
                 className="
             order-1
             m-0
-            lg:text-[56px] text-[26px]
+            lg:text-[56px] text-[24px]
             font-[700]
             leading-[1.2]
             text-[#000000] font-bold-font font-bold
@@ -557,7 +557,7 @@ const MissionPage = () => {
           order-3
           m-0
             mt-0 lg:mt-[20px]
-            lg:text-[34px] text-[20px]
+            lg:text-[34px] text-[18px]
             font-[400]
             leading-[32px] lg:leading-[44px]
             text-[#000000]

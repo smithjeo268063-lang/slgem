@@ -1,6 +1,7 @@
 import Image from "next/image";
 import TestimonyForm from "./testimony-form";
 import TestimonyVisionSection from "./testimony-vision-section";
+import VisionarySection from "@/components/vision-section";
 
 export default function TestimonyPage() {
   return (
@@ -99,7 +100,9 @@ export default function TestimonyPage() {
         </div>
       </section> */}
 
-      <TestimonyVisionSection />
+      {/* <TestimonyVisionSection /> */}
+
+      <VisionarySection />
     </main>
   );
 }

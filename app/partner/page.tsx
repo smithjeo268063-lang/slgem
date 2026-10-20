@@ -74,7 +74,7 @@ export default function PartnershipPage() {
         {...sectionReveal}
         className="flex items-center justify-center px-0 pb-6 pt-12 sm:py-20 mt-14 lg:mt-10 lg:py-30"
       >
-        <h1 className="w-full text-start lg:text-center text-[clamp(2rem,8vw,5rem)] font-bold leading-[1.18] text-black lg:w-[80%] lg:leading-[1.23]">
+        <h1 className="w-full text-start lg:text-center text-[clamp(36px,7vw,5rem)] font-bold leading-[1.18] text-black lg:w-[80%] lg:leading-[1.23]">
           The Mission Moves Faster When We Move Together
         </h1>
       </motion.section>
@@ -107,11 +107,11 @@ export default function PartnershipPage() {
         {...sectionReveal}
         className="w-full py-12 sm:py-16 md:py-20 lg:py-24"
       >
-        <h1 className="text-[22px] font-bold-font lg:font-normal-font lg:text-[28px] mb-4 lg:mb-2 text-center uppercase">
+        <h1 className="text-[24px] font-bold-font lg:font-normal-font lg:text-[28px] mb-4 lg:mb-2 text-center lg:uppercase">
           Why Partnership Matters
         </h1>
         <div>
-          <p className="text-[22px] font-bold-font leading-[1.4] lg:text-center sm:text-[36px] sm:leading-[48px] lg:text-[56px] lg:leading-[72px]">
+          <p className="text-[20px] font-bold-font leading-[1.4] lg:text-center sm:text-[36px] sm:leading-[48px] lg:text-[56px] lg:leading-[72px]">
             <span className="text-[#000000]">
               There are still villages waiting. Still souls
             </span>{" "}
@@ -130,7 +130,7 @@ export default function PartnershipPage() {
         {...sectionReveal}
         className="-mx-4 w-[calc(100%+2rem)] bg-[#F1F2F5] px-4 py-12 sm:-mx-8 sm:w-[calc(100%+4rem)] sm:px-8 sm:py-16 lg:-ml-[7%] lg:w-[114%] lg:px-20 lg:py-[70px]"
       >
-        <h1 className="mb-8 text-[32px] font-bold leading-[1.15] tracking-[-0.035em] text-[#000000] lg:text-[64px] lg:leading-[1.23]">
+        <h1 className="mb-8 text-[28px] font-bold leading-[1.15] tracking-[-0.035em] text-[#000000] lg:text-[64px] lg:leading-[1.23]">
           OUR PARTNERSHIP <br /> ARMS
         </h1>
         <div className="w-full border-t border-[#1A1A1A]">
@@ -223,7 +223,7 @@ export default function PartnershipPage() {
                       m-0
                         mt-[10px]
                       max-w-[95%]
-                      text-[20px]
+                      text-[18px]
                       font-[400]
                       leading-[1.5]
                       
@@ -300,7 +300,7 @@ export default function PartnershipPage() {
         >
           {/* Left content */}
           <div className="flex flex-col items-start px-6 py-10 sm:px-10 sm:py-12 md:px-14 md:py-16 lg:px-[12.7%] lg:py-[11%]">
-            <h2 className="mb-7 w-full max-w-[560px] text-[clamp(2rem,4.5vw,5rem)] font-bold leading-[1.22] tracking-[0.005em] text-black sm:mb-8 lg:mb-8">
+            <h2 className="mb-7 w-full max-w-[560px] text-[clamp(1.7rem,4.5vw,5rem)] font-bold leading-[1.22] tracking-[0.005em] text-black sm:mb-8 lg:mb-8">
               YOU DO NOT <br className="hidden lg:block" />
               HAVE TO DO <br className="hidden lg:block" />
               EVERYTHING
@@ -314,7 +314,7 @@ export default function PartnershipPage() {
               />
             </div>
 
-            <p className="max-w-[560px] text-[clamp(1.25rem,2.65vw,2.85rem)] font-normal leading-[1.36] tracking-[-0.035em] text-black">
+            <p className="max-w-[560px] text-[clamp(19px,2.65vw,2.85rem)] font-normal leading-[1.36] tracking-[-0.035em] text-black">
               You simply have to do your part. Some will pray. Some will give.
               Some will go. Some will serve behind the scenes. But together, the
               mission moves forward.
@@ -338,7 +338,7 @@ export default function PartnershipPage() {
             {...partnerCardReveal(1)}
             className="order-1 lg:col-start-2 lg:row-start-1"
           >
-            <h2 className="text-[32px] font-black leading-[1.2] text-black uppercase sm:text-[42px] lg:text-[58px]">
+            <h2 className="text-[28px] font-black leading-[1.2] text-black uppercase sm:text-[42px] lg:text-[58px]">
               A CALL TO
               <br />
               COMMITMENT
@@ -364,7 +364,7 @@ export default function PartnershipPage() {
             {...partnerCardReveal(2)}
             className="order-3 flex w-full flex-col justify-center lg:col-start-2 lg:row-start-2 lg:pl-4"
           >
-            <p className="mt-0 text-[18px] font-normal leading-[1.25] tracking-[-0.01em] text-black sm:text-[20px] lg:mt-2 lg:text-[32px]">
+            <p className="mt-0 text-[18px] font-normal leading-[1.5] tracking-[-0.01em] text-black sm:text-[20px] lg:mt-2 lg:text-[32px]">
               This is not about pressure. This is about purpose. It is about
               joining hands to advance something eternal. The harvest is still
               plentiful. The need is still urgent. And the gospel must keep
@@ -372,9 +372,11 @@ export default function PartnershipPage() {
             </p>
 
             <div className="mt-8 lg:mt-10">
-              <button className="h-[62px] w-full rounded-full border border-black bg-transparent text-[16px] font-bold uppercase tracking-wide text-black transition-colors duration-200 hover:bg-black hover:text-white lg:h-[68px] lg:text-[18px]">
-                SEE MISSIONS
-              </button>
+              <Link href="/mission" className="w-full lg:w-fit">
+                <button className="h-[48px] lg:h-[62px] w-full rounded-full border border-black bg-transparent text-[15px] font-bold uppercase tracking-wide text-black transition-colors duration-200 hover:bg-black hover:text-white lg:h-[68px] lg:text-[18px]">
+                  SEE MISSIONS
+                </button>
+              </Link>
             </div>
           </motion.div>
         </div>
@@ -384,7 +386,7 @@ export default function PartnershipPage() {
       {/* SECTION 3: COME AND RUN WITH THE VISION */}
       {/* ================================================== */}
 
-      <section className="relative isolate my-0 w-full overflow-visible bg-[#f8f9fb] pt-2 pb-16 sm:my-20 sm:py-20 md:min-h-[904px] md:py-12 lg:min-h-[600px] lg:py-0">
+      <section className="relative isolate my-0 w-full overflow-visible pb-16 sm:my-20 sm:py-20 md:min-h-[904px] md:py-12 lg:min-h-[600px] lg:py-0">
         {/* Floating card: upper left */}
         <motion.div
           initial={{ opacity: 1, y: 12 }}
@@ -444,13 +446,13 @@ export default function PartnershipPage() {
         {/* Centered content */}
         <motion.div
           {...partnerCardReveal(0)}
-          className="relative z-10 mx-auto flex w-full max-w-[1120px] flex-col lg:items-center px-2 lg:text-center md:pt-[42px] lg:pt-[43px]"
+          className="relative z-10 mx-auto flex w-full max-w-[1120px] flex-col lg:items-center lg:px-2 lg:text-center md:pt-[42px] lg:pt-[43px]"
         >
-          <h2 className="max-w-[1100px] text-[clamp(2rem,4.2vw,4.3rem)] font-bold leading-[1.25] lg:tracking-[-0.045em] text-black pr-10">
+          <h2 className="max-w-[1100px] text-[clamp(1.8rem,4.2vw,4.3rem)] font-bold leading-[1.25] lg:tracking-[-0.045em] text-black pr-10">
             Come and Run With the Vision
           </h2>
 
-          <p className="mt-3 max-w-[1100px] text-[clamp(1.125rem,2.45vw,2rem)] font-normal leading-[1.4] tracking-[-0.3px] text-black">
+          <p className="mt-3 max-w-[1100px] text-[clamp(1.1rem,2.45vw,2rem)] font-normal leading-[1.4] tracking-[0px] text-black">
             This is a divine assignment. The journey has begun. God
             <br className="hidden lg:block" /> is leading step by step. All that
             matters is faithfulness.

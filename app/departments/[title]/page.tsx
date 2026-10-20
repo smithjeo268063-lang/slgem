@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { departmentSlug, departments } from "../departments-data";
 import DepartmentDonationForm from "./department-donation-form";
 import DepartmentVisionSection from "./department-vision-section";
+import VisionarySection from "@/components/vision-section";
 
 export const instant = false;
 
@@ -50,7 +51,7 @@ export default async function DepartmentDetailPage({
               className="h-full w-full object-cover"
             />
           </div>
-          <p className="max-w-[1010px] text-[20px] leading-[1.6] text-[#4C4C4C] sm:text-xl lg:text-[28px]">
+          <p className="max-w-[1010px] text-[19px] leading-[1.6] text-[#4C4C4C] sm:text-xl lg:text-[28px]">
             {department.description}
           </p>
         </section>
@@ -128,7 +129,9 @@ export default async function DepartmentDetailPage({
           </div>
         </section>
 
-        <DepartmentVisionSection />
+        {/* <DepartmentVisionSection /> */}
+
+        <VisionarySection />
       </div>
     </main>
   );

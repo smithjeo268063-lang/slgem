@@ -54,12 +54,12 @@ export default function MediaDetail({
         {/* <p className="mb-4 text-sm font-bold uppercase tracking-wide text-[#555555]">
           {category}
         </p> */}
-        <p className="mt-4 lg:mt-8 text-[20px] leading-[32px] lg:leading-[1.4] text-[#0f0f0f] lg:text-[28px]">
+        <p className="mt-4 lg:mt-8 text-[18px] leading-[32px] lg:leading-[1.4] text-[#0f0f0f] lg:text-[28px]">
           {item.description}
         </p>
       </div>
 
-      <section className="relative isolate my-0 w-full overflow-visible  pt-2 sm:my-20 sm:py-20 md:min-h-[904px] md:py-12 lg:min-h-[600px] lg:py-0">
+      <section className="relative isolate my-0 w-full overflow-visible pt-8 pb-16 sm:my-20 sm:py-20 md:min-h-[904px] md:py-12 lg:min-h-[600px] lg:py-0">
         {/* Floating card: upper left */}
         <motion.div
           initial={{ opacity: 1, y: 12 }}
@@ -119,13 +119,13 @@ export default function MediaDetail({
         {/* Centered content */}
         <motion.div
           {...partnerCardReveal(0)}
-          className="relative z-10 mx-auto flex w-full max-w-[1120px] flex-col lg:items-center px-0 lg:text-center mt-8 md:pt-[42px] lg:pt-[43px]"
+          className="relative z-10 mx-auto flex w-full max-w-[1120px] flex-col lg:items-center lg:px-2 lg:text-center md:pt-[42px] lg:pt-[43px]"
         >
-          <h2 className="max-w-[1100px] text-[clamp(1.6rem,4.2vw,4.3rem)] font-bold leading-[1.25] lg:tracking-[-0.045em] text-black pr-25">
+          <h2 className="max-w-[1100px] text-[clamp(1.8rem,4.2vw,4.3rem)] font-bold leading-[1.25] lg:tracking-[-0.045em] text-black pr-10">
             Come and Run With the Vision
           </h2>
 
-          <p className="mt-3 max-w-[1100px] text-[clamp(1.125rem,2.45vw,2rem)] font-normal leading-[1.4] tracking-[-0.3px] text-black">
+          <p className="mt-3 max-w-[1100px] text-[clamp(1.1rem,2.45vw,2rem)] font-normal leading-[1.4] tracking-[0px] text-black">
             This is a divine assignment. The journey has begun. God
             <br className="hidden lg:block" /> is leading step by step. All that
             matters is faithfulness.
@@ -135,7 +135,7 @@ export default function MediaDetail({
 
           <a
             href="#partnership"
-            className="mt-7 inline-flex h-[54px] w-full max-w-[200px] items-center justify-center rounded-[20px] bg-[#100052] px-8 py-4 text-[18px] font-semibold text-white transition-colors duration-200 hover:bg-[#1d0875] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#100052]/30 sm:mt-2 sm:min-h-[55px] sm:rounded-[22px]"
+            className="mt-7 inline-flex min-h-[60px] w-full max-w-[250px] items-center justify-center rounded-[24px] bg-[#100052] px-8 py-4 text-[18px] font-semibold text-white transition-colors duration-200 hover:bg-[#1d0875] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#100052]/30 sm:mt-2 sm:min-h-[65px] sm:rounded-[22px]"
           >
             Partner with Us
           </a>

@@ -40,7 +40,7 @@ export default function DonatePage() {
               />
             ))}
           </div>
-          <p className="mt-5 text-[20px] lg:text-[24px] leading-[1.4] font-medium text-[#0000000]">
+          <p className="mt-5 text-[18px] lg:text-[24px] leading-[1.4] font-medium text-[#0000000]">
             “Their community-centered approach ensures every dollar truly makes
             a difference.”
           </p>
@@ -65,27 +65,6 @@ export default function DonatePage() {
         <DonationForm />
       </section>
 
-      <section className="mx-auto mt-10 md:mt-16 grid w-full max-w-[1440px] gap-8 sm:mt-24 sm:gap-10 lg:mt-30 lg:grid-cols-[0.95fr_1.05fr] lg:gap-5">
-        <div className="flex flex-col lg:gap-5 gap-2">
-          <h1 className="w-[100%] text-[34px] leading-[1.12] tracking-tight font-bold-font sm:text-[48px] lg:w-[80%] lg:text-[64px] capitalize md:uppercase lg:leading-[72px]">
-            You do not have to <br className="block md:hidden" /> do everything
-          </h1>
-          <p className="w-full text-[20px] leading-[1.5] font-medium text-[#0000000] sm:text-[28px] lg:w-[90%] lg:text-[32px]">
-            You simply have to do your part. Some will pray. Some will give.
-            Some will go. Some will serve behind the scenes. But together, the
-            mission moves forward.
-          </p>{" "}
-        </div>
-        <div className="h-[200px] w-full overflow-hidden rounded-[20px] sm:h-[280px] sm:rounded-[32px] lg:h-[460px] lg:rounded-[50px]">
-          <Image
-            src="/images/media/media_hero.jpg"
-            alt="SLGEM Media"
-            width={1920}
-            height={1080}
-            className="h-full w-full object-cover"
-          />
-        </div>
-      </section>
 
       <DonationVisionSection />
     </main>
