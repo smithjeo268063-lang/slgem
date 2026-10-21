@@ -41,7 +41,7 @@ const DepartmentsPage = () => {
         </p>
 
         <div>
-          <p className="mt-3.5 md:mt-0 lg:text-[56px] text-[24px] leading-[40px] lg:leading-[72px] font-bold-font text-start md:text-center">
+          <p className="mt-3.5 md:mt-0 lg:text-[56px] text-[28px] leading-[40px] lg:leading-[72px] font-bold-font text-start md:text-center">
             <span className="text-[#000000]">
               There are still villages waiting. Still souls
             </span>{" "}
