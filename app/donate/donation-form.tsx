@@ -1,10 +1,47 @@
 "use client";
 
 import type { FormEvent } from "react";
+import { useState } from "react";
+import { apiPost } from "@/lib/api";
 
 export default function DonationForm() {
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  const currency = "NGN";
+  const [message, setMessage] = useState("");
+
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+    const amount = Number(formData.get("donationAmount"));
+    if (!Number.isFinite(amount) || amount <= 0) {
+      setMessage("Enter a valid donation amount.");
+      return;
+    }
+    setMessage("");
+    try {
+      const result = await apiPost<{
+        status?: boolean;
+        checkout_url?: string ;
+        reference?: string;
+      }>(
+        "/giving/initialize",
+        {
+          full_name: String(formData.get("full_name") ?? "").trim(),
+          email: String(formData.get("email") ?? "").trim(),
+          message: String(formData.get("message") ?? "").trim(),
+          amount,
+          currency,
+        },
+      );
+      if (result?.status && result.checkout_url) {
+        window.location.assign(result.checkout_url);
+        return;
+      }
+      setMessage("The payment service did not return a checkout link.");
+    } catch (error) {
+      setMessage(
+        error instanceof Error ? error.message : "Unable to start donation.",
+      );
+    }
   }
 
   return (
@@ -20,18 +57,37 @@ export default function DonationForm() {
 
         <div className="mt-[22px] w-full">
           <label
-            htmlFor="fullName"
+            htmlFor="full_name"
             className="block text-[16px] font-bold leading-[30px] tracking-[-0.35px] text-[#111827]"
           >
             Your Full Names
           </label>
           <input
-            id="fullName"
-            name="fullName"
+            id="full_name"
+            name="full_name"
             type="text"
+            required
             placeholder="Enter your full name"
             className="mt-[0px] h-[45px] w-full border-0 border-b border-[#111111] rounded-[5px] bg-transparent px-0 pb-[2px] text-[18px] font-normal leading-[30px] tracking-[0px] text-[#111827] outline-none placeholder:text-[#A5AFBF] focus:border-[#111111] focus:ring-0"
           />
+        </div>
+
+        <div className="mt-[22px] w-full">
+          <label
+            htmlFor="currency"
+            className="block text-[16px] font-bold leading-[30px] text-[#111827]"
+          >
+            Currency
+          </label>
+          <select
+            id="currency"
+            name="currency"
+            value={currency}
+            disabled
+            className="h-[45px] w-full border-0 border-b border-[#111111] bg-transparent text-[18px]"
+          >
+            <option value="NGN">Naira (NGN)</option>
+          </select>
         </div>
 
         <div className="mt-[22px] w-full">
@@ -78,8 +134,9 @@ export default function DonationForm() {
             name="donationAmount"
             rows={1}
             inputMode="decimal"
-            aria-label="Donation amount in US dollars"
-            placeholder="$1000.00"
+            required
+            aria-label="Donation amount in Nigerian naira"
+            placeholder="₦1000.00"
             className="mt-2 h-[80px] md:h-[100px] w-full resize-none whitespace-nowrap rounded-[5px] border-0 border-b border-[#111111] bg-transparent px-0 pb-[2px] text-[54px] lg:text-[68px] font-normal leading-none tracking-[-1px] text-[#111827] outline-none placeholder:text-[#A5AFBF]/35 focus:border-[#111111] focus:ring-0"
           />
         </div>
@@ -90,6 +147,11 @@ export default function DonationForm() {
         >
           GIVE TO BLESS LIVES
         </button>
+        {message && (
+          <p role="alert" className="mt-4 text-sm text-red-700">
+            {message}
+          </p>
+        )}
       </form>
     </div>
   );

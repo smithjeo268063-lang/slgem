@@ -1,13 +1,10 @@
 import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import MediaDetail from "@/app/sermon/media-sermon-detail";
-import { mediaItemSlug, teachingSermons } from "@/app/media/media-data";
+import { apiGet, ApiError, getRecordImage, getRecordTitle } from "@/lib/api";
+import type { ApiTeaching } from "@/lib/api";
 
 export const instant = false;
-
-export function generateStaticParams() {
-  return teachingSermons.map((sermon) => ({ title: mediaItemSlug(sermon) }));
-}
 
 async function SermonContent({
   params,
@@ -15,15 +12,28 @@ async function SermonContent({
   params: Promise<{ title: string }>;
 }) {
   const { title } = await params;
-  const item = teachingSermons.find(
-    (sermon) => mediaItemSlug(sermon) === title,
-  );
-
-  if (!item) {
-    notFound();
+  let item: ApiTeaching;
+  try {
+    item = await apiGet<ApiTeaching>(
+      `/teachings/${encodeURIComponent(title)}`,
+    );
+  } catch (error) {
+    if (error instanceof ApiError && error.statusCode === 404) notFound();
+    throw error;
   }
 
-  return <MediaDetail item={item} category="Teaching Sermon" />;
+  return (
+    <MediaDetail
+      item={{
+        id: item?.id ?? 0,
+        slug: item?.slug,
+        title: getRecordTitle(item),
+        description: item?.description ?? "",
+        image: getRecordImage(item) || "/images/home/sermon.jpg",
+        embed_url: item?.embed_url,
+      }}
+    />
+  );
 }
 
 export default function SermonPage({

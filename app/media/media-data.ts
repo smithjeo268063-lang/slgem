@@ -1,8 +1,10 @@
 export type MediaItem = {
   id: number;
+  slug?: string;
   title: string;
   description: string;
   image: string;
+  embed_url?: string;
 };
 
 export const teachingSermons: MediaItem[] = [

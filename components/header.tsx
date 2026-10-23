@@ -52,9 +52,7 @@ const Header = () => {
     pathname === "/mission" ||
     pathname === "/update" ||
     pathname.startsWith("/about-mission/") ||
-    pathname === "" ||
-    pathname.startsWith("/update-mission/") ||
-    pathname.startsWith("/update-mission/");
+    pathname === "";
   const isHeaderLight = isScrolled || isMobileMenuOpen || !hasTransparentHero;
   const textColor = isHeaderLight ? "text-[#0A1931]" : "text-white";
   const linkClass = `whitespace-nowrap text-[15px] font-medium transition-opacity duration-300 hover:opacity-100 ${textColor}`;
@@ -152,7 +150,6 @@ const Header = () => {
                         >
                           {item.label}
                         </Link>
-                        
                       ))}
                     </motion.div>
                   )}

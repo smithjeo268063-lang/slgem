@@ -1,9 +1,7 @@
 import type { ReactNode } from "react";
 import MissionTitleProvider from "./mission-title-provider";
 
-export function generateStaticParams() {
-  return [{ title: "Enugu-field-event" }];
-}
+export const instant = false;
 
 function formatMissionTitle(slug: string) {
   return slug
@@ -24,7 +22,7 @@ export default async function AboutMissionLayout({
   const { title } = await params;
 
   return (
-    <MissionTitleProvider title={formatMissionTitle(title)}>
+    <MissionTitleProvider title={formatMissionTitle(title)} slug={title}>
       {children}
     </MissionTitleProvider>
   );

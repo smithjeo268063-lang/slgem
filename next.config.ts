@@ -1,9 +1,16 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
   experimental: {
     agentFeedback: true,
+  },
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "logistics.fadawebs.com",
+      },
+    ],
   },
   cacheComponents: true,
   partialPrefetching: true,

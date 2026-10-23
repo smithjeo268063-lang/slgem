@@ -3,8 +3,10 @@ import { motion } from "framer-motion";
 import NextImage from "next/image";
 import { sectionReveal } from "@/components/motion_presets";
 import Link from "next/link";
-import { departmentSlug, departments } from "./departments-data";
 import VisionarySection from "@/components/vision-section";
+import type { ApiRecord } from "@/lib/api";
+import { getRecordImage, getRecordTitle } from "@/lib/api";
+import { useApiData } from "@/lib/use-api";
 
 const partnerCardReveal = (index: number) => ({
   initial: { opacity: 0, y: 36, scale: 0.94 },
@@ -18,6 +20,9 @@ const partnerCardReveal = (index: number) => ({
 });
 
 const DepartmentsPage = () => {
+  const { data: departments, error, isLoading } =
+    useApiData<ApiRecord[]>("/departments");
+
   return (
     <main className="mt-14 w-full px-4 py-10 sm:mt-8 sm:px-8 sm:py-16 lg:mt-10 lg:px-20 lg:py-20">
       <section className="flex flex-col gap-6 py-0 sm:gap-10">
@@ -74,11 +79,24 @@ const DepartmentsPage = () => {
         </div>
         <div className="w-full border-t border-[#1A1A1A]">
           <div className="flex w-full flex-col">
-            {departments.map((department, index) => {
+            {error && (
+              <p role="alert" className="border-b border-[#1A1A1A] py-6 text-red-700">
+                Departments could not be loaded: {error}
+              </p>
+            )}
+            {isLoading && (
+              <p role="status" className="border-b border-[#1A1A1A] py-6">
+                Loading departments...
+              </p>
+            )}
+            {(departments ?? []).map((department, index) => {
+              const title = getRecordTitle(department);
+              const image =
+                getRecordImage(department) || "/images/mission/the_event.jpg";
               return (
                 <motion.article
-                  {...partnerCardReveal(department.id - 1)}
-                  key={index}
+                  {...partnerCardReveal(index)}
+                  key={department?.id ?? department?.slug ?? index}
                   className="
                     flex
                     w-full
@@ -98,7 +116,7 @@ const DepartmentsPage = () => {
                   >
                     <div className="flex min-w-0 items-center gap-3 sm:gap-4">
                       <h2 className="m-0 min-w-0 break-words text-[26px] w-[70%] font-extrabold leading-[1.2] text-black sm:text-[28px] sm:leading-[1.15]">
-                        {department.title}
+                        {title}
                       </h2>
                     </div>
 
@@ -114,21 +132,21 @@ const DepartmentsPage = () => {
                       "
                     >
                       <NextImage
-                        src={department.image}
-                        alt={department.title}
+                        src={image}
+                        alt={title}
                         fill
                         className="object-cover"
                         sizes="(max-width: 1024px) 100vw, 34vw"
-                        priority={department.id === 1}
+                        priority={index === 0}
                       />
                     </div>
 
                     <p className="mt-0 max-w-full text-[18px] leading-[1.55] text-[#4C4C4C] sm:text-[18px]">
-                      {department.description}
+                      {department?.description}
                     </p>
 
                     <Link
-                      href={`/departments/${departmentSlug(department.title)}`}
+                      href={`/departments/${department?.slug ?? ""}`}
                       className="
                         group
                         mt-0
@@ -177,28 +195,28 @@ const DepartmentsPage = () => {
                       "
                     >
                       <NextImage
-                        src={department.image}
-                        alt={department.title}
+                        src={image}
+                        alt={title}
                         fill
                         className="object-cover"
                         sizes="34vw"
-                        priority={department.id === 1}
+                        priority={index === 0}
                       />
                     </div>
 
                     <div className="flex w-[100%] flex-col justify-center py-[20px]">
                       <div className="flex min-w-0 items-center gap-3 sm:gap-4">
                         <h2 className="m-0 min-w-0 break-words text-[26px] font-extrabold leading-[1.2] text-black">
-                          {department.title}
+                          {title}
                         </h2>
                       </div>
 
                       <p className="mt-[26px] max-w-full text-[18px] leading-[1.55] text-[#4C4C4C]">
-                        {department.description}
+                        {department?.description}
                       </p>
 
                       <Link
-                        href={`/departments/${departmentSlug(department.title)}`}
+                        href={`/departments/${department?.slug ?? ""}`}
                         className="
                           group
                           mt-[80px]

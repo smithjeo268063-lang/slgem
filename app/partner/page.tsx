@@ -4,45 +4,9 @@ import { motion } from "framer-motion";
 import NextImage from "next/image";
 import { sectionReveal } from "@/components/motion_presets";
 import Link from "next/link";
-
-type Mission = {
-  id: number;
-  title: string;
-  description: string;
-  image: string;
-  raised: number;
-  goal: number;
-};
-
-const missions: Mission[] = [
-  {
-    id: 1,
-    title: "Covenant Study Partners",
-    description:
-      "These are individuals committed to growing spiritually and helping others grow through consistent engagement with teachings, discipleship, and the study of God's Word.",
-    image: "/images/mission/the_event.jpg",
-    raised: 3000,
-    goal: 8000,
-  },
-  {
-    id: 2,
-    title: "Covenant Study Partners",
-    description:
-      "These are individuals committed to growing spiritually and helping others grow through consistent engagement with teachings, discipleship, and the study of God's Word.",
-    image: "/images/mission/the_event.jpg",
-    raised: 6300,
-    goal: 8000,
-  },
-  {
-    id: 3,
-    title: "Covenant Study Partners",
-    description:
-      "These are individuals committed to growing spiritually and helping others grow through consistent engagement with teachings, discipleship, and the study of God's Word.",
-    image: "/images/mission/the_event.jpg",
-    raised: 4700,
-    goal: 8000,
-  },
-];
+import type { ApiRecord } from "@/lib/api";
+import { getRecordImage, getRecordTitle } from "@/lib/api";
+import { useApiData } from "@/lib/use-api";
 
 const partnerCardReveal = (index: number) => ({
   initial: { opacity: 0, y: 36, scale: 0.94 },
@@ -55,15 +19,10 @@ const partnerCardReveal = (index: number) => ({
   },
 });
 
-const toMissionSlug = (title: string) => {
-  const [firstWord, ...remainingWords] = title.trim().split(/\s+/);
-
-  return [firstWord, ...remainingWords.map((word) => word.toLowerCase())].join(
-    "-",
-  );
-};
-
 export default function PartnershipPage() {
+  const { data: partners, error, isLoading } =
+    useApiData<ApiRecord[]>("/partners");
+
   return (
     <main className="w-full overflow-hidden bg-[#f8f9fb] px-4 sm:px-8 lg:px-20">
       {/* ================================================== */}
@@ -135,11 +94,24 @@ export default function PartnershipPage() {
         </h1>
         <div className="w-full border-t border-[#1A1A1A]">
           <div className="flex w-full flex-col">
-            {missions.map((mission) => {
+            {error && (
+              <p role="alert" className="border-b border-[#1A1A1A] py-6 text-red-700">
+                Partners could not be loaded: {error}
+              </p>
+            )}
+            {isLoading && (
+              <p role="status" className="border-b border-[#1A1A1A] py-6">
+                Loading partners...
+              </p>
+            )}
+            {(partners ?? []).map((mission, index) => {
+              const missionTitle = getRecordTitle(mission);
+              const missionImage =
+                getRecordImage(mission) || "/images/mission/the_event.jpg";
               return (
                 <motion.article
-                  {...partnerCardReveal(mission.id - 1)}
-                  key={mission.id}
+                  {...partnerCardReveal(index)}
+                  key={mission?.id ?? mission?.slug ?? index}
                   className="
                   flex
                   w-full
@@ -157,7 +129,7 @@ export default function PartnershipPage() {
                     IMAGE
                 ======================================================= */}
                   <div
-                    key={`image-${mission.id}`}
+                    key={`image-${mission?.id ?? index}`}
                     className="
                     relative
                     h-[220px]
@@ -171,12 +143,12 @@ export default function PartnershipPage() {
                   "
                   >
                     <NextImage
-                      src={mission.image}
-                      alt={mission.title}
+                      src={missionImage}
+                      alt={missionTitle}
                       fill
                       className="object-cover"
                       sizes="(max-width: 1024px) 100vw, 34vw"
-                      priority={mission.id === 1}
+                      priority={index === 0}
                     />
                   </div>
 
@@ -184,7 +156,7 @@ export default function PartnershipPage() {
                     CONTENT
                 ======================================================= */}
                   <div
-                    key={`content-${mission.id}`}
+                    key={`content-${mission?.id ?? index}`}
                     className="
                     flex
                     w-full
@@ -197,7 +169,7 @@ export default function PartnershipPage() {
                     {/* TITLE */}
                     <nav className="flex min-w-0 items-center gap-3 sm:gap-4">
                       <span className="text-[#666666] leading-[1.15] text-[30px] font-thin sm:text-[38px]">
-                        {mission.id}
+                        {mission?.id ?? index + 1}
                       </span>{" "}
                       <h2
                         className="
@@ -213,7 +185,7 @@ export default function PartnershipPage() {
                       lg:text-[26px] font-bold-font lg:uppercase capitalize
                     "
                       >
-                        {mission.title}
+                        {missionTitle}
                       </h2>
                     </nav>
 
@@ -234,14 +206,14 @@ export default function PartnershipPage() {
                       lg:leading-[1.5]
                     "
                     >
-                      {mission.description}
+                      {mission?.description}
                     </p>
 
                     {/* ====================================================
                     JOIN US BUTTON
                   ===================================================== */}
                     <Link
-                      href={`/about-mission/${toMissionSlug(mission.title)}`}
+                      href={`/partner/${mission?.slug ?? ""}`}
                       className="
                       group
                       mt-6

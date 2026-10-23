@@ -2,50 +2,11 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { useMissionTitle } from "./mission-title-provider";
-
-type MissionUpdate = {
-  id: number;
-  title: string;
-  description: string;
-  image: string;
-  date: string;
-};
-
-const missionUpdates: MissionUpdate[] = [
-  {
-    id: 1,
-    title: "Week One Update",
-    description:
-      "This department focuses on direct soulwinning activities through: Evangelistic outreaches, open-air crusades, revival gatherings, community missions and rural evangelism.",
-    image: "/images/mission/the_event.jpg",
-    date: "Week One",
-  },
-  {
-    id: 2,
-    title: "Community Outreach",
-    description:
-      "Taking the gospel into local communities, connecting with families, praying with people and sharing the saving power of Jesus Christ.",
-    image: "/images/mission/the_event.jpg",
-    date: "Week Two",
-  },
-  {
-    id: 3,
-    title: "Open-Air Crusade",
-    description:
-      "Reaching people through open-air evangelistic meetings, worship, prayer and the preaching of the gospel in towns and cities.",
-    image: "/images/mission/the_event.jpg",
-    date: "Week Three",
-  },
-  {
-    id: 4,
-    title: "Rural Missions Update",
-    description:
-      "Bringing hope to underserved communities through rural evangelism, personal outreach and continued support for local mission efforts.",
-    image: "/images/mission/the_event.jpg",
-    date: "Week Four",
-  },
-];
+import { useMissionSlug, useMissionTitle } from "./mission-title-provider";
+import type { ApiMission, ApiMissionWithUpdates } from "@/lib/api";
+import { apiPost, getRecordImage } from "@/lib/api";
+import { useApiData } from "@/lib/use-api";
+import MissionPaymentStatus from "./mission-payment-status";
 
 const donationAmounts = [50, 100, 200, 300];
 
@@ -56,11 +17,25 @@ const formatAmount = (amount: number) =>
 
 export default function MissionDonationSection() {
   const title = useMissionTitle();
+  const slug = useMissionSlug();
   const [selectedAmount, setSelectedAmount] = useState<number | null>(100);
   const [customAmount, setCustomAmount] = useState("");
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
+  const { data: mission, error: missionError } = useApiData<ApiMission>(
+    `/missions/${encodeURIComponent(slug)}`,
+  );
+  const {
+    data: missionRecordsWithUpdates,
+    error: updatesError,
+    isLoading: updatesLoading,
+  } = useApiData<ApiMissionWithUpdates[]>(
+    `/missions/${encodeURIComponent(slug)}/updates`,
+  );
+  const missionUpdates =
+    missionRecordsWithUpdates?.find((record) => record?.slug === slug)
+      ?.updates ?? [];
 
   const amount = customAmount.trim() ? Number(customAmount) : selectedAmount;
 
@@ -70,7 +45,7 @@ export default function MissionDonationSection() {
     setMessage("");
   }
 
-  function handleDonate(event: React.FormEvent<HTMLFormElement>) {
+  async function handleDonate(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
     if (!amount || !Number.isFinite(amount) || amount <= 0) {
@@ -78,23 +53,39 @@ export default function MissionDonationSection() {
       return;
     }
 
-    setMessage(
-      `Thank you, ${fullName.trim()}! Your ${formatAmount(
-        amount,
-      )} donation is ready to be processed.`,
-    );
-
-    // Connect your payment provider here before accepting real donations.
+    const formData = new FormData(event.currentTarget);
+    setMessage("");
+    try {
+      const result = await apiPost<Record<string, unknown>>(
+        `/missions/${encodeURIComponent(slug)}/donate`,
+        {
+          full_name: fullName.trim(),
+          email: formData.get("email"),
+          amount,
+        },
+      );
+      const paymentUrl = result?.authorization_url;
+      if (typeof paymentUrl === "string") {
+        window.location.assign(paymentUrl);
+        return;
+      }
+      setMessage("Your donation request has been submitted.");
+    } catch (error) {
+      setMessage(
+        error instanceof Error ? error.message : "Unable to process donation.",
+      );
+    }
   }
 
   return (
     <main>
+      <MissionPaymentStatus />
       <section className="relative overflow-visible mb-40 isolate min-h-[340px] overflow-hidden bg-[#100b16] lg:h-[600px] absolute top-0 lg:min-h-0">
         {/* Background image */}
         <div
           className="absolute inset-0 -z-20 bg-cover bg-center bg-no-repeat"
           style={{
-            backgroundImage: "url('/images/mission/update.jpg')",
+            backgroundImage: `url('${getRecordImage(mission) || "/images/mission/update.jpg"}')`,
           }}
           aria-hidden="true"
         />
@@ -107,7 +98,7 @@ export default function MissionDonationSection() {
 
         {/* Hero heading */}
         <div className="mx-auto absolute bottom-[66px] lg:relative sm:relative max-w-[1500px] px-5 pt-16 text-start lg:text-center sm:px-8 sm:pt-20 lg:px-10 lg:pt-[210px]">
-          <h1 className="mx-auto max-w-[1250px] font-sans text-[clamp(2.4rem,6.1vw,7.25rem)] font-bold leading-[1.08] tracking-[-0.045em] text-white">
+          <h1 className="mx-auto max-w-[1250px] font-sans text-[clamp(2.4rem,5.8vw,7rem)] font-bold leading-[1.08] tracking-[-0.045em] text-white">
             Raise awareness about
             <br />
             {title}
@@ -123,7 +114,8 @@ export default function MissionDonationSection() {
                 Raised
               </p>
               <p className="whitespace-nowrap text-[26px] font-bold leading-tight tracking-[-0.035em] text-black sm:text-[42px] lg:text-[50px]">
-                $30,000
+                {mission?.formatted?.raised ??
+                  formatAmount(mission?.amounts?.raised ?? 0)}
               </p>
             </div>
 
@@ -133,7 +125,8 @@ export default function MissionDonationSection() {
                 Goal
               </p>
               <p className="whitespace-nowrap text-[26px] font-bold leading-tight tracking-[-0.035em] text-black sm:text-[42px] lg:text-[50px]">
-                $72,000
+                {mission?.formatted?.goal ??
+                  formatAmount(mission?.amounts?.goal ?? 0)}
               </p>
             </div>
 
@@ -143,7 +136,8 @@ export default function MissionDonationSection() {
                 Collection
               </p>
               <p className="text-[26px] font-bold leading-tight tracking-[-0.035em] text-white sm:text-[42px] lg:text-[50px]">
-                35%
+                {mission?.formatted?.progress ??
+                  `${mission?.amounts?.progress ?? 0}%`}
               </p>
             </div>
 
@@ -171,72 +165,98 @@ export default function MissionDonationSection() {
                 </h2>
 
                 <p className="max-w-[880px] text-[18px] font-normal leading-[1.5] tracking-[0px] text-[#080808] sm:text-[22px] lg:text-[26px]">
-                  This department focuses on direct soulwinning activities
-                  through: Evangelistic outreaches Open-air crusades Revival
-                  gatherings Community missions Rural evangelism The goal is
-                  simple: To reach people where they are and introduce them to
-                  the saving power of Jesus Christ. We believe no territory is
-                  too dark for the light of the gospel.
+                  {mission?.description}
                 </p>
               </div>
 
               {/* Four data-driven mission updates */}
               <nav className="max-h-fit overflow-y-auto lg:max-h-[calc(100vh-300px)] scrollbar-none">
-                <h1 className="text-[24px] font-bold leading-[1.2] tracking-[0px] text-black lg:text-[28px] mb-6">
+                <h1 className="text-[24px] bg-[#f8f9fb] border-b-1 w-full py-4 fixed z-10 font-bold leading-[1.2] tracking-[0px] text-black lg:text-[28px] mb-6">
                   Mission Updates
                 </h1>
-                <div>
-                  {missionUpdates.map((update) => (
-                    <article
-                      key={update.id}
-                      id={`mission-update-${update.id}`}
-                      className="grid grid-cols-1 gap-4 border-t border-[#202020] py-10 sm:grid-cols-[minmax(0,0.98fr)_minmax(0,0.99fr)] sm:gap-8 lg:gap-[24px] lg:py-[45px]"
-                    >
-                      <div className="h-[240px] overflow-hidden rounded-[28px] lg:h-[240px]">
-                        <img
-                          src={update.image}
-                          alt={update.title}
-                          loading="lazy"
-                          className="h-full w-full object-cover transition-transform duration-500 hover:scale-[1.03]"
-                        />
-                      </div>
+                <div className="mt-14">
+                  {missionError && (
+                    <p role="alert" className="text-sm text-red-700">
+                      Mission details could not be loaded: {missionError}
+                    </p>
+                  )}
+                  {updatesError && (
+                    <p role="alert" className="text-sm text-red-700">
+                      Mission updates could not be loaded: {updatesError}
+                    </p>
+                  )}
+                  {updatesLoading && (
+                    <p role="status" className="py-4">
+                      Loading mission updates...
+                    </p>
+                  )}
+                  {!updatesLoading &&
+                    !updatesError &&
+                    missionUpdates.length === 0 && (
+                      <p className="py-4 text-[#5e6677]">
+                        No mission updates are available yet.
+                      </p>
+                    )}
+                  {missionUpdates.map((update, index) => {
+                    const updateTitle = update?.title ?? "";
+                    const updateImage =
+                      update?.hero_image || "/images/mission/the_event.jpg";
+                    return (
+                      <article
+                        key={update?.id ?? update?.slug ?? index}
+                        id={`mission-update-${update?.id ?? index}`}
+                        className="grid grid-cols-1 gap-4 border-t border-[#202020] py-10 sm:grid-cols-[minmax(0,0.98fr)_minmax(0,0.99fr)] sm:gap-8 lg:gap-[24px] lg:py-[45px]"
+                      >
+                        <div className="h-[240px] overflow-hidden rounded-[28px] lg:h-[240px]">
+                          <img
+                            src={updateImage}
+                            alt={updateTitle}
+                            loading="lazy"
+                            className="h-full w-full object-cover transition-transform duration-500 hover:scale-[1.03]"
+                          />
+                        </div>
 
-                      <div className="flex min-w-0 flex-col items-start pt-0 sm:pt-0">
-                        {/* <span className="mb-2 text-sm font-medium text-[#6c7180]">
+                        <div className="flex min-w-0 flex-col items-start pt-0 sm:pt-0">
+                          {/* <span className="mb-2 text-sm font-medium text-[#6c7180]">
                         {update.date}
                       </span> */}
 
-                        <h3 className="text-[21px] font-bold leading-tight tracking-[0px] text-black lg:text-[24px]">
-                          {update.title}
-                        </h3>
+                          <h3 className="text-[21px] font-bold leading-tight tracking-[0px] text-black lg:text-[24px]">
+                            {updateTitle}
+                          </h3>
 
-                        <p className="mt-2 text-[18px] leading-[1.4] text-[#111111] lg:text-[18px] lg:leading-[1.5]">
-                          {update.description}
-                        </p>
+                          {update?.mission_update && (
+                            <p className="mt-2 line-clamp-4 whitespace-pre-line text-[18px] leading-[1.4] text-[#111111] lg:text-[18px] lg:leading-[1.5]">
+                              {update.mission_update}
+                            </p>
+                          )}
 
-                        <Link
-                          href={`/mission-update/${update.title.trim().toLowerCase().replace(/\s+/g, "-")}`}
-                          className="mt-10 lg:mt-8 inline-flex items-center gap-3 text-[14px] lg:text-[12px] font-bold uppercase text-black/80 transition-opacity hover:opacity-60"
-                        >
-                          View updates
-                          <svg
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            className="h-[18px] w-[18px]"
-                            aria-hidden="true"
-                          >
-                            <path
-                              d="M5 12h14m-6-6 6 6-6 6"
-                              stroke="currentColor"
-                              strokeWidth="2"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                            />
-                          </svg>
-                        </Link>
-                      </div>
-                    </article>
-                  ))}
+                          {update?.slug && (
+                            <Link
+                              href={`/mission-update/${encodeURIComponent(update.slug)}`}
+                              className="mt-10 lg:mt-8 inline-flex items-center gap-3 text-[14px] lg:text-[12px] font-bold uppercase text-black/80 transition-opacity hover:opacity-60"
+                            >
+                              View updates
+                              <svg
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                className="h-[18px] w-[18px]"
+                                aria-hidden="true"
+                              >
+                                <path
+                                  d="M5 12h14m-6-6 6 6-6 6"
+                                  stroke="currentColor"
+                                  strokeWidth="2"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                />
+                              </svg>
+                            </Link>
+                          )}
+                        </div>
+                      </article>
+                    );
+                  })}
 
                   <div className="border-t border-[#202020]" />
                 </div>

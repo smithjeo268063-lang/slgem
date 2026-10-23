@@ -2,28 +2,43 @@
 
 import { createContext, useContext, type ReactNode } from "react";
 
-const MissionTitleContext = createContext<string | null>(null);
+const MissionTitleContext = createContext<{
+  title: string;
+  slug: string;
+} | null>(null);
 
 export default function MissionTitleProvider({
   children,
   title,
+  slug,
 }: {
   children: ReactNode;
   title: string;
+  slug: string;
 }) {
   return (
-    <MissionTitleContext.Provider value={title}>
+    <MissionTitleContext.Provider value={{ title, slug }}>
       {children}
     </MissionTitleContext.Provider>
   );
 }
 
 export function useMissionTitle() {
-  const title = useContext(MissionTitleContext);
+  const context = useContext(MissionTitleContext);
 
-  if (title === null) {
+  if (context === null) {
     throw new Error("MissionTitleProvider is missing from the route layout.");
   }
 
-  return title;
+  return context.title;
+}
+
+export function useMissionSlug() {
+  const context = useContext(MissionTitleContext);
+
+  if (context === null) {
+    throw new Error("MissionTitleProvider is missing from the route layout.");
+  }
+
+  return context.slug;
 }

@@ -1,6 +1,6 @@
 import Image from "next/image";
 import TestimonyForm from "./testimony-form";
-import TestimonyVisionSection from "./testimony-vision-section";
+import TestimonyList from "./testimony-list";
 import VisionarySection from "@/components/vision-section";
 
 export default function TestimonyPage() {
@@ -37,7 +37,7 @@ export default function TestimonyPage() {
         <div className="w-full max-w-[440px]">
           <p className="text-sm font-bold text-[#374151]">TESTIMONY</p>
           <h2 className="mt-5 text-[28px] font-bold-font leading-tight sm:mt-8 sm:text-[38px] md:text-[48px]">
-            Let&apos;s Preserve Our Heritage
+            Share what God has done
           </h2>
 
           {/* <div
@@ -77,6 +77,8 @@ export default function TestimonyPage() {
 
         <TestimonyForm />
       </section>
+
+      <TestimonyList />
 
       {/* <section className="mt-30 mx-auto grid w-full max-w-[1440px] gap-10 lg:grid-cols-[0.95fr_1.05fr] lg:gap-5 ">
         <div className="flex flex-col gap-5">

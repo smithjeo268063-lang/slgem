@@ -5,6 +5,9 @@ import { cardReveal, sectionReveal } from "@/components/motion_presets";
 import { MotionConfig, motion } from "framer-motion";
 import NextImage from "next/image";
 import Link from "next/link";
+import type { ApiRecord } from "@/lib/api";
+import { getRecordTitle } from "@/lib/api";
+import { useApiData } from "@/lib/use-api";
 
 const missions = [
   {
@@ -34,32 +37,15 @@ const missions = [
   },
 ];
 
-const partners = [
-  {
-    number: "01",
-    title: "Covenant Frontline Partners",
-    description: "Serve hands-on in our outreaches",
-  },
-  {
-    number: "02",
-    title: "Covenant Prayer Partners",
-    description: "Stand with us in prayer",
-  },
-  {
-    number: "03",
-    title: "Covenant Seed Partners",
-    description: "Give financially, one-time or ongoing",
-  },
-  {
-    number: "04",
-    title: "Covenant Study Partners",
-    description: "Go deeper with us in the Word",
-  },
-];
-
 const revealProps = sectionReveal;
 
 export default function Hero() {
+  const {
+    data: partners,
+    error: partnersError,
+    isLoading: partnersLoading,
+  } = useApiData<ApiRecord[]>("/partners");
+
   return (
     <MotionConfig reducedMotion="user">
       <main className="w-full flex flex-1 flex-col lg:gap-20 gap-12 px-0 py-0 pb-16 lg:pb-40">
@@ -698,42 +684,48 @@ export default function Hero() {
 
             <nav className="w-full lg:w-[68%] bg-white  text-black lg:px-6 lg:py-[50px]">
               <div className="mx-auto grid w-full max-w-[1000px] grid-cols-1 items-start gap-y-14 sm:grid-cols-2 sm:gap-x-7 sm:gap-y-0 lg:gap-x-12">
-                {partners.map((partner) => (
+                {(partners ?? []).map((partner, index) => (
                   <motion.article
-                    {...cardReveal(Number(partner.number) - 1)}
-                    key={partner.number}
+                    {...cardReveal(index)}
+                    key={partner?.id ?? partner?.slug ?? index}
                     className={`min-w-0 rounded-b-[14px] border-b-[1.4px] border-[#212936] px-2 pb-6 sm:px-3 sm:pb-12 lg:px-5 lg:pb-[40px] ${
-                      partner.number === "02"
+                      index === 1
                         ? "sm:mt-[60px]"
-                        : partner.number === "03"
+                        : index === 2
                           ? "sm:mt-[64px]"
-                          : partner.number === "04"
+                          : index === 3
                             ? "sm:mt-[120px]"
                             : ""
                     }`}
                   >
                     <span
-                      key={`number-${partner.number}`}
+                      key={`number-${partner?.id ?? index}`}
                       className="mb-10 blockfont-bold-font leading-[1.2] text-[24px] lg:mb-[30px] lg:text-[26px]"
                     >
-                      {partner.number}
+                      {String(index + 1).padStart(2, "0")}
                     </span>
 
                     <h2
-                      key={`title-${partner.number}`}
+                      key={`title-${partner?.id ?? index}`}
                       className="mt-4 lg:mt-0 mb-[10px] max-w-[280px] lg:max-w-[360px] font-bold-font leading-[1.14] text-[26px] lg:text-[28px] lg:leading-[1.12]"
                     >
-                      {partner.title}
+                      {getRecordTitle(partner)}
                     </h2>
 
                     <p
-                      key={`description-${partner.number}`}
+                      key={`description-${partner?.id ?? index}`}
                       className="text-[16px] font-normal leading-[1.6] sm:leading-[1.45] lg:text-[18px]"
                     >
-                      {partner.description}
+                      {partner?.description}
                     </p>
                   </motion.article>
                 ))}
+                {partnersError && (
+                  <p role="alert" className="text-red-700">
+                    Partners could not be loaded: {partnersError}
+                  </p>
+                )}
+                {partnersLoading && <p role="status">Loading partners...</p>}
               </div>
             </nav>
           </motion.section>

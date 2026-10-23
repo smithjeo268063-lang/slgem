@@ -6,53 +6,9 @@ import NextImage from "next/image";
 import What_We_Do from "@/components/what_we_do";
 import { cardReveal, sectionReveal } from "@/components/motion_presets";
 import Link from "next/link";
-
-type Mission = {
-  id: number;
-  title: string;
-  description: string;
-  image: string;
-  raised: number;
-  goal: number;
-};
-
-const missions: Mission[] = [
-  {
-    id: 1,
-    title: "Enugu Field Event",
-    description:
-      "This department focuses on direct soulwinning activities through: Evangelistic outreaches Open-air crusades Revival gatherings Community missions Rural evangelism The goal is simple: To reach people where they are and introduce them to the saving power of Jesus Christ. We believe no territory is too dark for the light of the gospel.",
-    image: "/images/mission/the_event.jpg",
-    raised: 3000,
-    goal: 8000,
-  },
-  {
-    id: 2,
-    title: "Enugu Field Event",
-    description:
-      "This department focuses on direct soulwinning activities through: Evangelistic outreaches Open-air crusades Revival gatherings Community missions Rural evangelism The goal is simple: To reach people where they are and introduce them to the saving power of Jesus Christ. We believe no territory is too dark for the light of the gospel.",
-    image: "/images/mission/the_event.jpg",
-    raised: 6300,
-    goal: 8000,
-  },
-  {
-    id: 3,
-    title: "Enugu Field Event",
-    description:
-      "This department focuses on direct soulwinning activities through: Evangelistic outreaches Open-air crusades Revival gatherings Community missions Rural evangelism The goal is simple: To reach people where they are and introduce them to the saving power of Jesus Christ. We believe no territory is too dark for the light of the gospel.",
-    image: "/images/mission/the_event.jpg",
-    raised: 4700,
-    goal: 8000,
-  },
-];
-
-const toMissionSlug = (title: string) => {
-  const [firstWord, ...remainingWords] = title.trim().split(/\s+/);
-
-  return [firstWord, ...remainingWords.map((word) => word.toLowerCase())].join(
-    "-",
-  );
-};
+import type { ApiMission } from "@/lib/api";
+import { getRecordImage, getRecordTitle } from "@/lib/api";
+import { useApiData } from "@/lib/use-api";
 
 /*
 |--------------------------------------------------------------------------
@@ -95,6 +51,9 @@ const getProgressWidth = (percentage: number) => {
 };
 
 const MissionPage = () => {
+  const { data: missions, error, isLoading } =
+    useApiData<ApiMission[]>("/missions");
+
   return (
     <MotionConfig reducedMotion="user">
       <main className="lg:pb-36 pb-20">
@@ -181,26 +140,49 @@ const MissionPage = () => {
         >
           <div className="w-full border-t border-[#1A1A1A]">
             <div className="flex w-full flex-col">
-              {missions.map((mission) => {
+              {error && (
+                <p role="alert" className="border-b border-[#1A1A1A] py-6 text-red-700">
+                  Missions could not be loaded: {error}
+                </p>
+              )}
+              {isLoading && (
+                <p role="status" className="border-b border-[#1A1A1A] py-6">
+                  Loading missions...
+                </p>
+              )}
+              {(missions ?? []).map((mission, index) => {
+                const raised =
+                  mission?.amounts?.raised ??
+                  mission?.amount_raised ??
+                  mission?.raised_amount ??
+                  0;
+                const goal =
+                  mission?.amounts?.goal ??
+                  mission?.goal_amount ??
+                  mission?.target_amount ??
+                  0;
                 const calculatedProgress =
-                  mission.goal > 0
+                  goal > 0
                     ? Math.min(
-                        Math.round((mission.raised / mission.goal) * 100),
+                        Math.round((raised / goal) * 100),
                         100,
                       )
                     : 0;
 
                 const progressWidth = getProgressWidth(calculatedProgress);
+                const title = getRecordTitle(mission);
+                const image =
+                  getRecordImage(mission) || "/images/mission/the_event.jpg";
 
                 return (
                   <motion.article
-                    {...cardReveal(mission.id - 1)}
+                    {...cardReveal(index)}
                     variants={sectionReveal}
                     viewport={{
                       once: true,
                       amount: 0.01,
                     }}
-                    key={mission.id}
+                    key={mission?.id ?? mission?.slug ?? index}
                     className="
                   flex
                   w-full
@@ -232,12 +214,12 @@ const MissionPage = () => {
                   "
                     >
                       <NextImage
-                        src={mission.image}
-                        alt={mission.title}
+                        src={image}
+                        alt={title}
                         fill
                         className="object-cover"
                         sizes="(max-width: 1024px) 100vw, 34vw"
-                        priority={mission.id === 1}
+                        priority={index === 0}
                       />
                     </div>
 
@@ -268,7 +250,7 @@ const MissionPage = () => {
                       lg:text-[28px] font-bold-font lg:uppercase capitalize
                     "
                       >
-                        {mission.title}
+                        {title}
                       </h2>
 
                       {/* DESCRIPTION */}
@@ -286,7 +268,7 @@ const MissionPage = () => {
                       lg:leading-[1.5]
                     "
                       >
-                        {mission.description}
+                        {mission?.description}
                       </p>
 
                       {/* ====================================================
@@ -339,7 +321,8 @@ const MissionPage = () => {
                           lg:text-[28px]
                         "
                           >
-                            Raised: ${mission.raised}/{mission.goal}
+                            Raised: {mission?.formatted?.raised ?? raised} /{" "}
+                            {mission?.formatted?.goal ?? goal}
                           </p>
 
                           <p
@@ -363,7 +346,7 @@ const MissionPage = () => {
                       VIEW DETAILS
                   ===================================================== */}
                       <Link
-                        href={`/about-mission/${toMissionSlug(mission.title)}`}
+                        href={`/about-mission/${mission?.slug ?? ""}`}
                         className="
                       group
                       lg:mt-[60px] mt-[30px]

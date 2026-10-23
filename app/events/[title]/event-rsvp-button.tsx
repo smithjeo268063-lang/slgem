@@ -10,6 +10,15 @@ import {
   useRef,
   useState,
 } from "react";
+import { apiPostWithQuery } from "@/lib/api";
+
+type EventRegistration = {
+  first_name?: string;
+  surname?: string;
+  gender?: string;
+  email?: string;
+  event_id?: number;
+};
 
 type ModalStep =
   | "closed"
@@ -17,18 +26,21 @@ type ModalStep =
   | "declined"
   | "details"
   | "loading"
+  | "error"
   | "success";
 
 export default function EventRsvpButton({
   eventTitle,
+  eventSlug,
 }: {
   eventTitle: string;
+  eventSlug: string;
 }) {
   const [step, setStep] = useState<ModalStep>("closed");
   const [phone, setPhone] = useState<string | undefined>();
   const [phoneError, setPhoneError] = useState("");
+  const [registeredSurname, setRegisteredSurname] = useState("");
   const dialogRef = useRef<HTMLDialogElement>(null);
-  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     const dialog = dialogRef.current;
@@ -37,32 +49,54 @@ export default function EventRsvpButton({
     }
   }, [step]);
 
-  useEffect(
-    () => () => {
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
-    },
-    [],
-  );
-
   function closeDialog() {
     dialogRef.current?.close();
     setStep("closed");
     setPhone(undefined);
     setPhoneError("");
+    setRegisteredSurname("");
   }
 
-  function submitRegistration(event: FormEvent<HTMLFormElement>) {
+  async function submitRegistration(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!phone || !isValidPhoneNumber(phone)) {
       setPhoneError("Enter a valid phone number for the selected country.");
       return;
     }
 
+    const form = event.currentTarget;
+    const formData = new FormData(form);
+    const surname = String(formData.get("surname") ?? "").trim();
+    if (!surname) {
+      setPhoneError("Enter your surname to continue.");
+      return;
+    }
+
     setPhoneError("");
     setStep("loading");
-    timeoutRef.current = setTimeout(() => setStep("success"), 1300);
+    try {
+      const registration = await apiPostWithQuery<EventRegistration>(
+        `/events/${encodeURIComponent(eventSlug)}/register`,
+        {
+          first_name: String(formData.get("firstName") ?? "").trim(),
+          gender: String(formData.get("gender") ?? ""),
+          email: String(formData.get("email") ?? "").trim(),
+          surname,
+        },
+      );
+      if (!registration?.surname) {
+        throw new Error(
+          "Registration succeeded, but the API did not return the registered surname.",
+        );
+      }
+      setRegisteredSurname(registration.surname);
+      setStep("success");
+    } catch (error) {
+      setPhoneError(
+        error instanceof Error ? error.message : "Registration failed.",
+      );
+      setStep("error");
+    }
   }
 
   return (
@@ -113,6 +147,7 @@ export default function EventRsvpButton({
                   {step === "declined" && "Response noted"}
                   {step === "details" && "Register your attendance"}
                   {step === "loading" && "Registering your details"}
+                  {step === "error" && "Registration failed"}
                   {step === "success" && "You're expected at the event"}
                 </h2>
               </div>
@@ -303,12 +338,33 @@ export default function EventRsvpButton({
               </div>
             )}
 
+            {step === "error" && (
+              <div role="alert" className="px-6 py-7 sm:px-8 sm:py-8">
+                <p className="text-base leading-relaxed text-red-700">
+                  {phoneError}
+                </p>
+                <button
+                  type="button"
+                  onClick={() => setStep("details")}
+                  className="mt-7 min-h-12 w-full rounded-lg bg-[#0E004E] px-5 py-3 font-bold text-white"
+                >
+                  Try again
+                </button>
+              </div>
+            )}
+
             {step === "success" && (
               <div className="px-6 py-7 sm:px-8 sm:py-8">
                 <p className="text-base leading-relaxed text-[#52616a]">
                   Your RSVP is confirmed for <strong>{eventTitle}</strong>.
                   We’ll be expecting you at the event.
                 </p>
+                {/* {registeredSurname && (
+                  <p className="mt-3 text-sm text-[#52616a]">
+                    Surname captured by the API:{" "}
+                    <strong>{registeredSurname}</strong>
+                  </p>
+                )} */}
                 {/* <p className="mt-4 text-sm leading-relaxed text-[#657079]">
                   This is a local demo: your details have not been sent to or
                   stored by a registration service.

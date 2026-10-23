@@ -1,7 +1,6 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
 import type { MediaItem } from "../media/media-data";
 import { motion } from "framer-motion";
 
@@ -18,10 +17,8 @@ const partnerCardReveal = (index: number) => ({
 
 export default function MediaDetail({
   item,
-  category,
 }: {
   item: MediaItem;
-  category: string;
 }) {
   return (
     <main className="mx-auto w-full max-w-[1440px] px-4 pt-16 sm:px-8 sm:pt-16 lg:px-20 lg:pt-20 pb-12 lg:pb-0">
@@ -38,6 +35,17 @@ export default function MediaDetail({
       </h1>
 
       <article className="mt-4 lg:mt-8 grid grid-cols-1 gap-8  lg:items-center lg:gap-14">
+        {item.embed_url ? (
+          <div className="relative aspect-video w-full overflow-hidden rounded-[24px] sm:rounded-[32px]">
+            <iframe
+              src={item.embed_url}
+              title={item.title}
+              className="absolute inset-0 h-full w-full"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowFullScreen
+            />
+          </div>
+        ) : (
         <div className="relative h-[240px] w-full overflow-hidden rounded-[24px] sm:h-[340px] sm:rounded-[32px] lg:h-[420px]">
           <Image
             src={item.image}
@@ -48,6 +56,7 @@ export default function MediaDetail({
             className="object-cover"
           />
         </div>
+        )}
       </article>
 
       <div>

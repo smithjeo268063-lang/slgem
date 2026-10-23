@@ -4,8 +4,34 @@ import Link from "next/link";
 import { useState } from "react";
 
 import { motion } from "framer-motion";
-import { eventSlug, events } from "./events-data";
-import type { EventStatus } from "./events-data";
+import type { ApiEvent } from "@/lib/api";
+import { getRecordImage, getRecordTitle } from "@/lib/api";
+import { useApiData } from "@/lib/use-api";
+
+type EventStatus = "ongoing" | "upcoming" | "past";
+
+function classifyEvents(events: ApiEvent[]) {
+  const now = Date.now();
+  return events.map((event) => {
+    if (
+      event?.status === "ongoing" ||
+      event?.status === "upcoming" ||
+      event?.status === "past"
+    ) {
+      return event;
+    }
+
+    const start = event?.start_date ? Date.parse(event.start_date) : NaN;
+    const end = event?.end_date ? Date.parse(event.end_date) : NaN;
+    const status =
+      Number.isNaN(start) || Number.isNaN(end) || start > now
+        ? "upcoming"
+        : end < now
+          ? "past"
+          : "ongoing";
+    return { ...event, status };
+  });
+}
 
 const filters: { label: string; value: EventStatus }[] = [
   { label: "Ongoing", value: "ongoing" },
@@ -15,10 +41,28 @@ const filters: { label: string; value: EventStatus }[] = [
 
 export default function EventsPage() {
   const [activeFilter, setActiveFilter] = useState<EventStatus>("ongoing");
-
-  const filteredEvents = events.filter(
-    (event) => event.status === activeFilter,
+  const { data: events, error, isLoading } = useApiData<ApiEvent[]>(
+    "/events",
+    classifyEvents,
   );
+
+  const getEventStatus = (event: ApiEvent | null | undefined): EventStatus => {
+    if (event?.status === "ongoing" || event?.status === "upcoming" || event?.status === "past") {
+      return event.status;
+    }
+
+    return "upcoming";
+  };
+
+  const filteredEvents = (events ?? []).filter(
+    (event) => getEventStatus(event) === activeFilter,
+  );
+  const formatDate = (date: string | undefined) =>
+    date
+      ? new Intl.DateTimeFormat("en", { dateStyle: "medium" }).format(
+          new Date(date),
+        )
+      : "";
 
   return (
     <main className="mt-16 min-h-screen w-full bg-[#f8f9fa] px-5 pb-8 pt-8   text-[#1c1c1c] sm:mt-20 sm:px-10 sm:pb-10 sm:pt-5 lg:px-20">
@@ -58,11 +102,19 @@ export default function EventsPage() {
 
       {/* Event listing */}
       <section aria-label={`${activeFilter} events`} className="w-full">
-        {filteredEvents.length > 0 ? (
+        {error ? (
+          <p role="alert" className="border-b border-[#858585] py-8 text-red-700">
+            Events could not be loaded: {error}
+          </p>
+        ) : isLoading ? (
+          <p role="status" className="border-b border-[#858585] py-8">
+            Loading events...
+          </p>
+        ) : filteredEvents.length > 0 ? (
           <div className="grid grid-cols-1 gap-y-8 lg:grid-cols-2 lg:gap-x-[4%] lg:gap-y-0">
             {filteredEvents.map((event, index) => (
               <article
-                key={event.id}
+                key={event?.id ?? event?.slug ?? index}
                 className={`grid min-w-0 grid-cols-1 gap-5 border-b-2 border-[#858585] pb-8 pt-0 sm:grid-cols-[minmax(185px,195px)_minmax(0,1fr)] sm:gap-8 sm:pb-10 lg:gap-6 ${
                   index >= 2 ? "lg:pt-16" : ""
                 }`}
@@ -70,8 +122,8 @@ export default function EventsPage() {
                 {/* Event image */}
                 <div className="h-55 w-full rounded-[20px] sm:rounded-[0px] overflow-hidden sm:h-75">
                   <img
-                    src={event.image}
-                    alt="Historic red-brick heritage building"
+                    src={getRecordImage(event)}
+                    alt={getRecordTitle(event)}
                     className="h-full w-full object-cover object-center"
                   />
                 </div>
@@ -79,19 +131,19 @@ export default function EventsPage() {
                 {/* Event information */}
                 <div className="flex min-w-0 flex-col items-start">
                   <p className="mb-4 text-[15px] font-normal leading-[1.4] text-[#3f3f3f] sm:mb-6 sm:text-base">
-                    {event.dateFrom} - {event.dateTo}
+                    {formatDate(event?.start_date)} - {formatDate(event?.end_date)}
                   </p>
 
                   <h2 className="mb-3 text-[24px] font-bold leading-[1.4] text-black sm:text-[24px] sm:leading-[1.22]">
-                    {event.title}
+                    {getRecordTitle(event)}
                   </h2>
 
                   <p className="mb-4 text-[18px] font-normal leading-[1.65] text-[#6b6b6b] sm:text-base sm:leading-[1.6]">
-                    {event.description}
+                    {event?.description}
                   </p>
 
                   <Link
-                    href={`/events/${eventSlug(event)}`}
+                    href={`/events/${event?.slug ?? event?.id ?? ""}`}
                     className="mt-2 inline-flex items-center gap-3 text-sm font-bold uppercase leading-none text-black transition-opacity hover:opacity-60 sm:mt-auto sm:gap-4"
                   >
                     <span>View details</span>

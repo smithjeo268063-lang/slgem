@@ -4,7 +4,9 @@ import NextImage from "next/image";
 import { sectionReveal } from "@/components/motion_presets";
 import Link from "next/link";
 import { useState } from "react";
-import { mediaItemSlug, photoExcerpts, teachingSermons } from "./media-data";
+import type { ApiEvent, ApiRecord, ApiTeaching } from "@/lib/api";
+import { getRecordImage, getRecordTitle } from "@/lib/api";
+import { useApiData } from "@/lib/use-api";
 
 const partnerCardReveal = (index: number) => ({
   initial: { opacity: 0, y: 36, scale: 0.94 },
@@ -17,11 +19,38 @@ const partnerCardReveal = (index: number) => ({
   },
 });
 
+function truncateWords(text: string | undefined, limit: number) {
+  if (!text) return "";
+
+  const words = text.trim().split(/\s+/);
+  return words.length > limit ? `${words.slice(0, limit).join(" ")} ...` : text;
+}
+
 const MediaPage = () => {
-  const [activeTab, setActiveTab] = useState<"sermons" | "photoExcerpts">(
-    "sermons",
-  );
-  const activeItems = activeTab === "sermons" ? teachingSermons : photoExcerpts;
+  const [activeTab, setActiveTab] = useState<
+    "sermons" | "missionGallery" | "eventGallery"
+  >("sermons");
+  const teachings = useApiData<ApiTeaching[]>("/teachings");
+  const missionGallery = useApiData<ApiRecord[]>("/gallery/missions");
+  const eventGallery = useApiData<ApiEvent[]>("/gallery/events");
+  const activeItems =
+    activeTab === "sermons"
+      ? (teachings.data ?? [])
+      : activeTab === "missionGallery"
+        ? (missionGallery.data ?? [])
+        : (eventGallery.data ?? []);
+  const activeError =
+    activeTab === "sermons"
+      ? teachings.error
+      : activeTab === "missionGallery"
+        ? missionGallery.error
+        : eventGallery.error;
+  const activeLoading =
+    activeTab === "sermons"
+      ? teachings.isLoading
+      : activeTab === "missionGallery"
+        ? missionGallery.isLoading
+        : eventGallery.isLoading;
 
   return (
     <main className="mt-14 w-full px-4 py-10 sm:mt-8 sm:px-8 sm:py-16 lg:mt-10 lg:px-20 lg:py-20">
@@ -66,28 +95,43 @@ const MediaPage = () => {
               aria-selected={activeTab === "sermons"}
               aria-controls="media-list"
               onClick={() => setActiveTab("sermons")}
-              className={`inline-flex min-h-12 min-w-0 flex-1 items-center justify-center whitespace-nowrap rounded-[14px] px-2 py-3 text-[15px] font-semibold tracking-wide transition-colors duration-200 sm:min-h-[60px] sm:flex-none sm:rounded-[28px] sm:px-8 sm:py-4 sm:text-[20px] lg:text-[22px] ${
+              className={`inline-flex min-h-12 min-w-0 flex-1 items-center justify-center whitespace-nowrap rounded-[14px] px-2 py-3 text-[16px] font-semibold tracking-wide transition-colors duration-200 sm:min-h-[60px] sm:flex-none sm:rounded-[28px] sm:px-8 sm:py-4 sm:text-[20px] lg:text-[22px] ${
                 activeTab === "sermons"
                   ? "bg-[#000066] text-white hover:bg-[#08034a]"
                   : "text-black hover:bg-white sm:border sm:border-black sm:bg-transparent sm:hover:bg-black sm:hover:text-white"
               }`}
             >
-              Teaching Sermons
+              Teaching <br className="block md:hidden" /> Sermons
             </button>
             <button
-              id="photo-excerpts-tab"
+              id="mission-gallery-tab"
               type="button"
               role="tab"
-              aria-selected={activeTab === "photoExcerpts"}
+              aria-selected={activeTab === "missionGallery"}
               aria-controls="media-list"
-              onClick={() => setActiveTab("photoExcerpts")}
-              className={`inline-flex min-h-12 min-w-0 w-fit flex-1 items-center justify-center whitespace-nowrap rounded-[14px] px-2 py-3 text-[15px] font-semibold tracking-wide transition-colors duration-200 sm:min-h-[60px] sm:flex-none sm:rounded-[28px] sm:px-8 sm:py-4 sm:text-[20px] lg:text-[22px] ${
-                activeTab === "photoExcerpts"
+              onClick={() => setActiveTab("missionGallery")}
+              className={`inline-flex min-h-12 min-w-0 w-fit flex-1 items-center justify-center whitespace-nowrap rounded-[14px] px-2 py-3 text-[16px] font-semibold tracking-wide transition-colors duration-200 sm:min-h-[60px] sm:flex-none sm:rounded-[28px] sm:px-8 sm:py-4 sm:text-[20px] lg:text-[22px] ${
+                activeTab === "missionGallery"
                   ? "bg-[#000066] text-white hover:bg-[#08034a]"
                   : "text-black hover:bg-white sm:border sm:border-black sm:bg-transparent sm:hover:bg-black sm:hover:text-white"
               }`}
             >
-              Photo Excerpts
+              Mission <br className="block md:hidden" /> Gallery
+            </button>
+            <button
+              id="event-gallery-tab"
+              type="button"
+              role="tab"
+              aria-selected={activeTab === "eventGallery"}
+              aria-controls="media-list"
+              onClick={() => setActiveTab("eventGallery")}
+              className={`inline-flex min-h-12 min-w-0 w-fit flex-1 items-center justify-center whitespace-nowrap rounded-[14px] px-2 py-3 text-[16px] font-semibold tracking-wide transition-colors duration-200 sm:min-h-[60px] sm:flex-none sm:rounded-[28px] sm:px-8 sm:py-4 sm:text-[20px] lg:text-[22px] ${
+                activeTab === "eventGallery"
+                  ? "bg-[#000066] text-white hover:bg-[#08034a]"
+                  : "text-black hover:bg-white sm:border sm:border-black sm:bg-transparent sm:hover:bg-black sm:hover:text-white"
+              }`}
+            >
+              Event <br className="block md:hidden" /> Gallery
             </button>
           </div>
         </div>
@@ -98,15 +142,37 @@ const MediaPage = () => {
             aria-labelledby={
               activeTab === "sermons"
                 ? "teaching-sermons-tab"
-                : "photo-excerpts-tab"
+                : activeTab === "missionGallery"
+                  ? "mission-gallery-tab"
+                  : "event-gallery-tab"
             }
             className="flex w-full flex-col"
           >
-            {activeItems.map((item) => {
+            {activeError && (
+              <p
+                role="alert"
+                className="border-b border-[#1A1A1A] py-6 text-red-700"
+              >
+                This gallery could not be loaded: {activeError}
+              </p>
+            )}
+            {activeLoading && (
+              <p role="status" className="border-b border-[#1A1A1A] py-6">
+                Loading media...
+              </p>
+            )}
+            {activeItems.map((item, index) => {
+              const title = getRecordTitle(item);
+              const image = getRecordImage(item) || "/images/media/experts.png";
+              const slug = item?.slug ?? item?.id ?? "";
+              const detailPath =
+                activeTab === "sermons"
+                  ? `/sermon/${slug}`
+                  : `/photo-excerpt/${slug}?gallery=${activeTab === "missionGallery" ? "missions" : "events"}`;
               return (
                 <motion.article
-                  {...partnerCardReveal(item.id - 1)}
-                  key={`${activeTab}-${item.id}`}
+                  {...partnerCardReveal(index)}
+                  key={`${activeTab}-${item?.id ?? item?.slug ?? index}`}
                   className="
                   flex
                   w-full
@@ -122,7 +188,7 @@ const MediaPage = () => {
                 "
                 >
                   <div
-                    key={`image-${activeTab}-${item.id}`}
+                    key={`image-${activeTab}-${item?.id ?? index}`}
                     className="
                     relative
                     h-[190px]
@@ -137,17 +203,17 @@ const MediaPage = () => {
                   "
                   >
                     <NextImage
-                      src={item.image}
-                      alt={item.title}
+                      src={image}
+                      alt={title}
                       fill
                       className="object-cover"
                       sizes="(max-width: 1024px) 100vw, 34vw"
-                      priority={item.id === 1}
+                      priority={index === 0}
                     />
                   </div>
 
                   <div
-                    key={`content-${activeTab}-${item.id}`}
+                    key={`content-${activeTab}-${item?.id ?? index}`}
                     className="
                     flex
                     w-full
@@ -175,16 +241,16 @@ const MediaPage = () => {
                         </svg>
                       )}
                       <h2 className="m-0 min-w-0 break-words text-[24px] font-extrabold leading-[1.2] text-black sm:text-[28px] sm:leading-[1.15] lg:text-[26px]">
-                        {item.title}
+                        {title}
                       </h2>
                     </div>
 
                     <p className="mt-2 max-w-full text-[18px] leading-[1.55] text-[#4C4C4C] sm:mt-[10px] sm:text-[18px] lg:mt-[26px] lg:text-[18px]">
-                      {item.description}
+                      {truncateWords(item?.description, 50)}
                     </p>
 
                     <Link
-                      href={`/${activeTab === "sermons" ? "sermon" : "photo-excerpt"}/${mediaItemSlug(item)}`}
+                      href={detailPath}
                       className="
                       group
                       mt-4

@@ -1,10 +1,43 @@
 "use client";
 
 import type { FormEvent } from "react";
+import { useState } from "react";
+import { apiPost } from "@/lib/api";
 
 export default function TestimonyForm() {
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  const [message, setMessage] = useState("");
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    const form = event.currentTarget;
+    const formData = new FormData(form);
+    const testimonyPayload = {
+      full_name: formData.get("fullName"),
+      phone_number: formData.get("phone"),
+      email: formData.get("email"),
+      testimony: formData.get("message"),
+    };
+
+    setIsSubmitting(true);
+    setMessage("");
+    try {
+      await apiPost("/testimonies", testimonyPayload);
+      console.log("Testimony posted:", testimonyPayload.testimony);
+      setIsSuccess(true);
+      setMessage("Your testimony has been submitted for review.");
+      form.reset();
+    } catch (error) {
+      setIsSuccess(false);
+      setMessage(
+        error instanceof Error
+          ? error.message
+          : "Unable to submit your testimony.",
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   return (
@@ -26,6 +59,7 @@ export default function TestimonyForm() {
             id="fullName"
             name="fullName"
             type="text"
+            required
             placeholder="Enter your full name"
             className="mt-[0px] h-[45px] w-full border-0 border-b border-[#111111] rounded-[5px] bg-transparent px-0 pb-[2px] text-[18px] font-normal leading-[30px] tracking-[0px] text-[#111827] outline-none placeholder:text-[#A5AFBF] focus:border-[#111111] focus:ring-0"
           />
@@ -40,8 +74,9 @@ export default function TestimonyForm() {
           </label>
           <input
             id="PhoneNumber"
-            name="PhoneNumber"
-            type="number"
+            name="phone"
+            type="tel"
+            required
             placeholder="Enter your phone number"
             className="mt-[0px] h-[45px] w-full border-0 border-b border-[#111111] rounded-[5px] bg-transparent px-0 pb-[2px] text-[18px] font-normal leading-[30px] tracking-[0px] text-[#111827] outline-none placeholder:text-[#A5AFBF] focus:border-[#111111] focus:ring-0"
           />
@@ -74,6 +109,7 @@ export default function TestimonyForm() {
             id="email"
             name="email"
             type="email"
+            required
             placeholder="Enter your email address"
             className="mt-[0px] h-[45px] w-full border-0 border-b border-[#111111] rounded-[5px] bg-transparent px-0 pb-[2px] text-[18px] font-normal leading-[30px] tracking-[0px] text-[#111827] outline-none placeholder:text-[#A5AFBF] focus:border-[#111111] focus:ring-0"
           />
@@ -89,6 +125,7 @@ export default function TestimonyForm() {
           <textarea
             id="message"
             name="message"
+            required
             rows={3}
             placeholder="Enter what you are giving"
             className="mt-2 min-h-[110px] w-full resize-y rounded-[5px] border-0 border-b border-[#111111] bg-transparent px-0 py-2 text-[18px] flex items-end font-normal leading-[30px] tracking-[0px] text-[#111827] outline-none placeholder:text-[#A5AFBF] focus:border-[#111111] focus:ring-0"
@@ -115,10 +152,19 @@ export default function TestimonyForm() {
 
         <button
           type="submit"
+          disabled={isSubmitting}
           className="mt-[22px] flex h-[62px] md:h-[78px] w-full items-center justify-center rounded-full bg-[#0E004E] px-[0px] text-center text-[18px] font-bold leading-[30px] tracking-[0.7px] text-white transition-all duration-300 hover:bg-[#130066] active:scale-[0.99]"
         >
-          Share now
+          {isSubmitting ? "Sharing..." : "Share now"}
         </button>
+        {message && (
+          <p
+            role={isSuccess ? "status" : "alert"}
+            className={`mt-4 text-sm ${isSuccess ? "text-green-800" : "text-red-700"}`}
+          >
+            {message}
+          </p>
+        )}
       </form>
     </div>
   );

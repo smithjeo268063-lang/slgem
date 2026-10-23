@@ -2,6 +2,7 @@
 
 import NextImage from "next/image";
 import { motion } from "framer-motion";
+import Link from "next/link";
 
 const partnerCardReveal = (index: number) => ({
   initial: { opacity: 0, y: 36, scale: 0.94 },
@@ -39,7 +40,7 @@ export default function VisionarySection() {
         </div>
       </section>
 
-      <section className="relative isolate my-0 w-full overflow-visible pt-10 pb-16 sm:my-20 sm:py-20 md:min-h-[904px] md:py-12 lg:min-h-[600px] lg:py-0">
+      <section className="relative hidden lg:block isolate my-0 w-full overflow-visible pt-10 pb-16 sm:my-20 sm:py-20 md:min-h-[904px] md:py-12 lg:min-h-[600px] lg:py-0">
         <motion.div
           initial={{ opacity: 1, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
@@ -107,13 +108,60 @@ export default function VisionarySection() {
             you be part of it?
           </p>
           <a
-            href="#partnership"
+            href="/partner"
             className="mt-7 inline-flex h-[54px] w-full max-w-[200px] items-center justify-center rounded-[20px] bg-[#100052] px-8 py-4 text-[18px] font-semibold text-white transition-colors duration-200 hover:bg-[#1d0875] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#100052]/30 sm:mt-2 sm:min-h-[55px] sm:rounded-[22px]"
           >
             Partner with Us
           </a>
         </motion.div>
       </section>
+
+      <motion.section className="mt-10 w-full block lg:hidden bg-white lg:my-10">
+        
+        <div className="relative mx-auto flex min-h-[400px] w-full max-w-[1554px] flex-col justify-end overflow-hidden rounded-[32px] bg-[#fff8f7] px-4 pb-12 pt-16 sm:rounded-[40px] lg:px-14 lg:pb-14 lg:min-h-[700px] lg:rounded-[32px] ">
+          <div className="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between lg:gap-10">
+            <div className="w-full lg:w-[55%]">
+              <h2 className="max-w-[780px] text-[30px] font-bold-font leading-[1.3] text-[#141927]  lg:text-[66px] lg:leading-[1]">
+                Come and Run With
+                <br /> the Vision
+              </h2>
+
+              <p className="mt-4 max-w-[740px] text-[17px] font-normal leading-[1.55] text-[#10265f]  lg:mt-4.5 lg:text-[18px] lg:leading-[1.5] ">
+                This is a divine assignment. The journey has begun. God
+                <br className="hidden lg:block" /> is leading step by step. All
+                that matters is faithfulness.
+                <br className="hidden lg:block" /> All that matters is souls.
+                Will you be part of it?
+              </p>
+            </div>
+
+            <Link
+              href="/partner"
+              className="group inline-flex w-fit shrink-0 items-center gap-3 rounded-[14px] bg-[#141927] py-[11px] pl-[24px] pr-[12px] text-[14px] font-semibold tracking-[0.3px] text-white shadow-[0_10px_16px_rgba(20,25,39,0.14),0_3px_5px_rgba(20,25,39,0.07)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_14px_22px_rgba(20,25,39,0.18)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#141927]focus-visible:ring-offset-4"
+            >
+              <span className="whitespace-nowrap">Partner with Us</span>
+
+              <span className="flex size-[30px] items-center justify-center rounded-[10px] bg-[#fffaf9] text-[#10265f] transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  aria-hidden="true"
+                >
+                  <path d="M7 17 17 7" />
+                  <path d="M8 7h9v9" />
+                </svg>
+              </span>
+            </Link>
+          </div>
+        </div>
+      </motion.section>
     </main>
   );
 }

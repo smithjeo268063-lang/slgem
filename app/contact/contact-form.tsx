@@ -1,10 +1,34 @@
 "use client";
 
 import type { FormEvent } from "react";
+import { useState } from "react";
+import { apiPost } from "@/lib/api";
 
 export default function ContactForm() {
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  const [message, setMessage] = useState("");
+  const [isSuccess, setIsSuccess] = useState(false);
+
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    const form = event.currentTarget;
+    const formData = new FormData(form);
+    try {
+      await apiPost("/contact", {
+        full_name: formData.get("fullName"),
+        phone_number: formData.get("phone"),
+        subject: formData.get("subject"),
+        email: formData.get("email"),
+        message: formData.get("message"),
+      });
+      setIsSuccess(true);
+      setMessage("Thank You, Your message has been sent.");
+      form.reset();
+    } catch (error) {
+      setIsSuccess(false);
+      setMessage(
+        error instanceof Error ? error.message : "Unable to send your message.",
+      );
+    }
   }
 
   return (
@@ -26,6 +50,7 @@ export default function ContactForm() {
             id="fullName"
             name="fullName"
             type="text"
+            required
             placeholder="Enter your full name"
             className="mt-[0px] h-[45px] w-full border-0 border-b border-[#111111] rounded-[5px] bg-transparent px-0 pb-[2px] text-[18px] font-normal leading-[30px] tracking-[0px] text-[#111827] outline-none placeholder:text-[#A5AFBF] focus:border-[#111111] focus:ring-0"
           />
@@ -40,8 +65,9 @@ export default function ContactForm() {
           </label>
           <input
             id="PhoneNumber"
-            name="PhoneNumber"
-            type="number"
+            name="phone"
+            type="tel"
+            required
             placeholder="Enter your phone number"
             className="mt-[0px] h-[45px] w-full border-0 border-b border-[#111111] rounded-[5px] bg-transparent px-0 pb-[2px] text-[18px] font-normal leading-[30px] tracking-[0px] text-[#111827] outline-none placeholder:text-[#A5AFBF] focus:border-[#111111] focus:ring-0"
           />
@@ -49,15 +75,16 @@ export default function ContactForm() {
 
         <div className="mt-[22px] w-full">
           <label
-            htmlFor="suject/topics"
+            htmlFor="subject"
             className="block text-[16px] font-bold uppercase leading-[30px] tracking-[0px] text-[#111827]"
           >
             Suject/topic
           </label>
           <input
-            id="suject/topics"
-            name="suject/topics"
+            id="subject"
+            name="subject"
             type="text"
+            required
             placeholder="Enter your subject or topic  "
             className="mt-[0px] h-[45px] w-full border-0 border-b border-[#111111] rounded-[5px] bg-transparent px-0 pb-[2px] text-[18px] font-normal leading-[30px] tracking-[0px] text-[#111827] outline-none placeholder:text-[#A5AFBF] focus:border-[#111111] focus:ring-0"
           />
@@ -74,6 +101,7 @@ export default function ContactForm() {
             id="email"
             name="email"
             type="email"
+            required
             placeholder="Enter your email address"
             className="mt-[0px] h-[45px] w-full border-0 border-b border-[#111111] rounded-[5px] bg-transparent px-0 pb-[2px] text-[18px] font-normal leading-[30px] tracking-[0px] text-[#111827] outline-none placeholder:text-[#A5AFBF] focus:border-[#111111] focus:ring-0"
           />
@@ -89,6 +117,7 @@ export default function ContactForm() {
           <textarea
             id="message"
             name="message"
+            required
             rows={3}
             placeholder="Enter what you are giving"
             className="mt-2 min-h-[110px] w-full resize-y rounded-[5px] border-0 border-b border-[#111111] bg-transparent px-0 py-2 text-[18px] flex items-end font-normal leading-[30px] tracking-[0px] text-[#111827] outline-none placeholder:text-[#A5AFBF] focus:border-[#111111] focus:ring-0"
@@ -119,6 +148,14 @@ export default function ContactForm() {
         >
           Contact Us
         </button>
+        {message && (
+          <p
+            role={isSuccess ? "status" : "alert"}
+            className={`mt-4 text-sm ${isSuccess ? "text-black-800" : "text-red-700"}`}
+          >
+            {message}
+          </p>
+        )}
       </form>
     </div>
   );
