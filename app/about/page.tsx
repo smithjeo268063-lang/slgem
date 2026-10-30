@@ -1,5 +1,6 @@
 "use client";
 
+import VisionarySection from "@/components/vision-section";
 import { motion } from "framer-motion";
 import { useState } from "react";
 
@@ -439,87 +440,13 @@ export default function AboutPage() {
             ))}
           </div>
         </div>
+        
       </section>
 
-      <section className="relative isolate my-10 w-full overflow-hidden pt-2 pb-12 px-5 lg:px-0 sm:my-20 sm:overflow-visible sm:py-20 md:min-h-[904px] md:py-12 lg:min-h-[600px] lg:py-0">
-        {/* Floating card: upper left */}
-        <motion.div
-          initial={{ opacity: 1, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.12, ease: [0.22, 1, 0.36, 1] }}
-          className="pointer-events-none absolute left-[2%] top-[12%] hidden w-[290px] -rotate-[-60deg] overflow-hidden rounded-[26px] sm:block md:left-[6%] md:top-[20%] md:w-[300px] lg:w-[210px] lg:h-[190px]"
-        >
-          <img
-            src="/images/partner/vision1.jpg"
-            alt=""
-            className="aspect-[1.28/1] h-full w-full object-cover"
-          />
-        </motion.div>
-
-        {/* Floating card: upper right */}
-        <motion.div
-          initial={{ opacity: 1, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.24, ease: [0.22, 1, 0.36, 1] }}
-          className="pointer-events-none absolute right-[3%] top-[12%] hidden w-[280px] rotate-[-60deg] overflow-hidden rounded-[26px] sm:block md:right-[5%] md:top-[19%] md:w-[290px] lg:w-[210px] lg:h-[190px]"
-        >
-          <img
-            src="/images/partner/vision2.jpg"
-            alt=""
-            className="aspect-[1.22/1] h-full w-full object-cover"
-          />
-        </motion.div>
-
-        {/* Floating card: lower left */}
-        <motion.div
-          initial={{ opacity: 1, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.36, ease: [0.22, 1, 0.36, 1] }}
-          className="pointer-events-none absolute bottom-[11%] left-[22%] hidden w-[290px] -rotate-[30deg] overflow-hidden rounded-[26px] sm:block md:bottom-[10%] md:left-[18%] md:w-[300px] lg:w-[210px] lg:h-[190px]"
-        >
-          <img
-            src="/images/partner/vision1.jpg"
-            alt=""
-            className="aspect-[1.28/1] h-full w-full object-cover"
-          />
-        </motion.div>
-
-        {/* Floating card: lower right */}
-        <motion.div
-          initial={{ opacity: 1, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.48, ease: [0.22, 1, 0.36, 1] }}
-          className="pointer-events-none absolute bottom-[11%] right-[21%] hidden w-[320px] rotate-[36deg] overflow-hidden rounded-[26px] sm:block md:bottom-[10%] md:right-[19%] md:w-[330px] lg:w-[210px] lg:h-[190px]"
-        >
-          <img
-            src="/images/partner/vision1.jpg"
-            alt=""
-            className="aspect-[1.28/1] h-full w-full object-cover"
-          />
-        </motion.div>
-
-        {/* Centered content */}
-        <motion.div className="relative z-10 mx-auto flex w-full max-w-[1120px] flex-col lg:items-center lg:text-center md:pt-[42px] lg:pt-[43px]">
-          <h2 className="max-w-[1100px] pr-0 text-[30px] font-bold leading-tight text-black sm:text-[40px] lg:text-[58px]">
-            Come and Run With the Vision
-          </h2>
-
-          <p className="mt-3 max-w-[1100px] text-base font-normal leading-[1.5] text-black sm:text-lg lg:text-[24px] lg:leading-[1.4]">
-            This is a divine assignment. The journey has begun. God
-            <br className="hidden lg:block" /> is leading step by step. All that
-            matters is faithfulness.
-            <br className="hidden lg:block" /> All that matters is souls. Will
-            you be part of it?
-          </p>
-
-          <a
-            href="#partnership"
-            className="mt-6 inline-flex h-12 w-full max-w-[200px] items-center justify-center rounded-xl bg-[#100052] px-6 text-base font-semibold text-white transition-colors duration-200 hover:bg-[#1d0875] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#100052]/30 sm:mt-2 sm:h-[55px] sm:rounded-[22px] sm:text-[18px]"
-          >
-            Partner with Us
-          </a>
-        </motion.div>
-      </section>
+<section className="w-full overflow-hidden px-5 pb-16 pt-12 text-black sm:px-8 sm:pb-24 sm:pt-20 lg:px-20 lg:pb-[120px] lg:pt-[105px]">
+  
+      <VisionarySection />
+</section>
     </main>
   );
 }

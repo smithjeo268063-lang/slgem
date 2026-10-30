@@ -1,32 +1,31 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 
 const footerColumns = [
   {
     title: "{ HOME }",
     links: [
-      { label: "Home 1", href: "/" },
-      { label: "Home 2", href: "/" },
-      { label: "Home 3", href: "/" },
+      { label: "Home", href: "/" },
+      { label: "Our Mission", href: "/mission" },
+      { label: "Events", href: "/events" },
     ],
   },
   {
     title: "{ COMPANY }",
     links: [
       { label: "About us", href: "/about" },
-      { label: "Our Team", href: "/team" },
-      { label: "Events", href: "/events" },
-      { label: "Testimonials", href: "/testimonials" },
+      { label: "Our Media", href: "/media" },
+      { label: "Departments", href: "/departments" },
     ],
   },
   {
     title: "{ SUPPORT }",
     links: [
-      { label: "Projects", href: "/projects" },
-      { label: "Join Us", href: "/join-us" },
       { label: "Donate", href: "/donate" },
       { label: "Contact Us", href: "/contact" },
+      { label: "Testimonials", href: "/testimonials" },
     ],
   },
   {
@@ -70,18 +69,19 @@ export default function Footer() {
           <div className="max-w-[470px]">
             <Link
               href="/"
-              className="
-                block
-                text-[28px]
-                font-medium
-                leading-none
-                tracking-[-1.5px]
-              "
+              aria-label="SLGEM home"
+              className="relative block h-16 w-16"
             >
-              LOGO
+              <Image
+                src="/images/COLOURED%20ICON%20WHITE%20FILL.png"
+                alt="SLGEM"
+                fill
+                sizes="64px"
+                className="object-contain"
+              />
             </Link>
 
-            <div className="mt-[20px] lg:mt-[42px]">
+            <div className="mt-[15px] lg:mt-[25px]">
               <p
                 className="
                   m-0
@@ -100,7 +100,7 @@ export default function Footer() {
               <p
                 className="
                   m-0
-                  mt-[5px]
+                  mt-[4px]
                   text-[16px]
                   font-normal
                   leading-[1.45]
@@ -113,7 +113,7 @@ export default function Footer() {
               <p
                 className="
                   m-0
-                  mt-[29px]
+                  mt-[19px]
                   text-[16px]
                   font-normal
                   leading-[1.45]
@@ -126,7 +126,7 @@ export default function Footer() {
               <p
                 className="
                   m-0
-                  mt-[28px]
+                  mt-[18px]
                   text-[16px]
                   font-normal
                   leading-[1.45]

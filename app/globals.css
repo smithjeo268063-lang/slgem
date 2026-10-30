@@ -22,6 +22,22 @@ body {
   color: var(--foreground);
 }
 
+.skeleton-shimmer {
+  background: linear-gradient(90deg, #e5e7eb 0%, #f3f4f6 50%, #e5e7eb 100%);
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.4s ease-in-out infinite;
+}
+
+@keyframes skeleton-shimmer {
+  from {
+    background-position: 100% 0;
+  }
+
+  to {
+    background-position: -100% 0;
+  }
+}
+
 .app-motion-root main {
   animation: app-page-enter 760ms cubic-bezier(0.16, 1, 0.3, 1) both;
 }
@@ -127,6 +143,11 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .skeleton-shimmer {
+    animation: none;
+    background-position: center;
+  }
+
   .app-motion-root main,
   .app-motion-root main section,
   .app-motion-root main figure,

@@ -8,6 +8,7 @@ import Link from "next/link";
 import type { ApiRecord } from "@/lib/api";
 import { getRecordTitle } from "@/lib/api";
 import { useApiData } from "@/lib/use-api";
+import { Skeleton, SkeletonStatus } from "@/components/skeleton-loader";
 
 const missions = [
   {
@@ -567,7 +568,7 @@ export default function Hero() {
                   power, so believers can walk in love and live victoriously.
                 </p>
 
-                <a
+                <Link
                   href="/mission"
                   className="text-[#000] font-bold flex gap-4 items-center text-[15px] lg:text-[16px]"
                 >
@@ -584,7 +585,7 @@ export default function Hero() {
                   >
                     →
                   </span>
-                </a>
+                </Link>
               </div>
 
               <div className="w-full lg:w-[48%] overflow-hidden rounded-[16px] h-[220px] lg:h-[330px]">
@@ -725,7 +726,24 @@ export default function Hero() {
                     Partners could not be loaded: {partnersError}
                   </p>
                 )}
-                {partnersLoading && <p role="status">Loading partners...</p>}
+                {partnersLoading && (
+                  <SkeletonStatus
+                    label="Loading partners"
+                    className="grid w-full grid-cols-1 gap-y-14 sm:grid-cols-2 sm:gap-x-7 sm:gap-y-8 lg:gap-x-12"
+                  >
+                    {[0, 1, 2, 3].map((item) => (
+                      <div
+                        key={item}
+                        className="min-w-0 space-y-4 rounded-b-[14px] border-b border-[#212936] px-2 pb-6 sm:px-3 sm:pb-12 lg:px-5 lg:pb-[40px]"
+                      >
+                        <Skeleton className="h-7 w-12 rounded-md" />
+                        <Skeleton className="h-8 w-3/4 rounded-md" />
+                        <Skeleton className="h-4 w-full rounded-md" />
+                        <Skeleton className="h-4 w-5/6 rounded-md" />
+                      </div>
+                    ))}
+                  </SkeletonStatus>
+                )}
               </div>
             </nav>
           </motion.section>

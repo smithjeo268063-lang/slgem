@@ -7,6 +7,7 @@ import { motion } from "framer-motion";
 import type { ApiEvent } from "@/lib/api";
 import { getRecordImage, getRecordTitle } from "@/lib/api";
 import { useApiData } from "@/lib/use-api";
+import { Skeleton, SkeletonStatus } from "@/components/skeleton-loader";
 
 type EventStatus = "ongoing" | "upcoming" | "past";
 
@@ -107,9 +108,26 @@ export default function EventsPage() {
             Events could not be loaded: {error}
           </p>
         ) : isLoading ? (
-          <p role="status" className="border-b border-[#858585] py-8">
-            Loading events...
-          </p>
+          <SkeletonStatus
+            label="Loading events"
+            className="grid grid-cols-1 gap-y-8 lg:grid-cols-2 lg:gap-x-[4%]"
+          >
+            {[0, 1].map((item) => (
+              <div
+                key={item}
+                className="grid min-w-0 grid-cols-1 gap-5 border-b-2 border-[#858585] pb-8 sm:grid-cols-[minmax(185px,195px)_minmax(0,1fr)] sm:gap-8 sm:pb-10"
+              >
+                <Skeleton className="h-55 w-full rounded-[20px] sm:h-75 sm:rounded-none" />
+                <div className="space-y-4">
+                  <Skeleton className="h-4 w-2/3 rounded-md" />
+                  <Skeleton className="h-7 w-4/5 rounded-md" />
+                  <Skeleton className="h-4 w-full rounded-md" />
+                  <Skeleton className="h-4 w-full rounded-md" />
+                  <Skeleton className="h-4 w-1/3 rounded-md" />
+                </div>
+              </div>
+            ))}
+          </SkeletonStatus>
         ) : filteredEvents.length > 0 ? (
           <div className="grid grid-cols-1 gap-y-8 lg:grid-cols-2 lg:gap-x-[4%] lg:gap-y-0">
             {filteredEvents.map((event, index) => (

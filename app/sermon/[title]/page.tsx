@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import MediaDetail from "@/app/sermon/media-sermon-detail";
 import { apiGet, ApiError, getRecordImage, getRecordTitle } from "@/lib/api";
 import type { ApiTeaching } from "@/lib/api";
+import { Skeleton, SkeletonStatus } from "@/components/skeleton-loader";
 
 export const instant = false;
 
@@ -44,8 +45,16 @@ export default function SermonPage({
   return (
     <Suspense
       fallback={
-        <main className="mx-auto w-full max-w-[1440px] px-5 py-12 text-[18px] sm:px-8 lg:px-20">
-          Loading teaching sermon...
+        <main className="mx-auto w-full max-w-[1440px] px-5 py-12 sm:px-8 lg:px-20">
+          <SkeletonStatus label="Loading teaching sermon" className="space-y-8">
+            <Skeleton className="h-12 w-2/3 rounded-md" />
+            <Skeleton className="aspect-video w-full rounded-[24px] sm:rounded-[32px]" />
+            <div className="space-y-4">
+              <Skeleton className="h-5 w-full rounded-md" />
+              <Skeleton className="h-5 w-full rounded-md" />
+              <Skeleton className="h-5 w-4/5 rounded-md" />
+            </div>
+          </SkeletonStatus>
         </main>
       }
     >

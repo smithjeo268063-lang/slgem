@@ -9,6 +9,7 @@ import Link from "next/link";
 import type { ApiMission } from "@/lib/api";
 import { getRecordImage, getRecordTitle } from "@/lib/api";
 import { useApiData } from "@/lib/use-api";
+import { Skeleton, SkeletonStatus } from "@/components/skeleton-loader";
 
 /*
 |--------------------------------------------------------------------------
@@ -146,9 +147,23 @@ const MissionPage = () => {
                 </p>
               )}
               {isLoading && (
-                <p role="status" className="border-b border-[#1A1A1A] py-6">
-                  Loading missions...
-                </p>
+                <SkeletonStatus label="Loading missions">
+                  {[0, 1].map((item) => (
+                    <div
+                      key={item}
+                      className="flex w-full flex-col gap-[40px] border-b border-[#1A1A1A] py-[50px] lg:flex-row lg:items-center lg:gap-[6%]"
+                    >
+                      <Skeleton className="h-[260px] w-full shrink-0 rounded-[36px] sm:h-[320px] lg:h-[380px] lg:w-[36%]" />
+                      <div className="flex w-full flex-col gap-5 lg:w-[60%]">
+                        <Skeleton className="h-8 w-3/4 rounded-md" />
+                        <Skeleton className="h-4 w-full rounded-md" />
+                        <Skeleton className="h-4 w-5/6 rounded-md" />
+                        <Skeleton className="h-3 w-full rounded-full" />
+                        <Skeleton className="h-12 w-40 rounded-full" />
+                      </div>
+                    </div>
+                  ))}
+                </SkeletonStatus>
               )}
               {(missions ?? []).map((mission, index) => {
                 const raised =

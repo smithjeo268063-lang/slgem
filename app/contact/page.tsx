@@ -1,3 +1,4 @@
+import VisionarySection from "@/components/vision-section";
 import ContactForm from "./contact-form";
 import ContactVisionSection from "./contact-vision-section";
 
@@ -85,7 +86,7 @@ export default function ContactPage() {
         </div>
       </section> */}
 
-      <ContactVisionSection />
+      <VisionarySection />
     </main>
   );
 }

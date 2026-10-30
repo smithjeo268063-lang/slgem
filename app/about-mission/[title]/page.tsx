@@ -6,6 +6,7 @@ import { useMissionSlug, useMissionTitle } from "./mission-title-provider";
 import type { ApiMission, ApiMissionWithUpdates } from "@/lib/api";
 import { apiPost, getRecordImage } from "@/lib/api";
 import { useApiData } from "@/lib/use-api";
+import { Skeleton, SkeletonStatus } from "@/components/skeleton-loader";
 import MissionPaymentStatus from "./mission-payment-status";
 
 const donationAmounts = [50, 100, 200, 300];
@@ -186,9 +187,25 @@ export default function MissionDonationSection() {
                     </p>
                   )}
                   {updatesLoading && (
-                    <p role="status" className="py-4">
-                      Loading mission updates...
-                    </p>
+                    <SkeletonStatus
+                      label="Loading mission updates"
+                      className="space-y-5 py-4"
+                    >
+                      {[0, 1].map((item) => (
+                        <div
+                          key={item}
+                          className="grid gap-4 border-t border-[#202020] py-8 sm:grid-cols-2 sm:gap-8"
+                        >
+                          <Skeleton className="h-[240px] w-full rounded-[28px]" />
+                          <div className="space-y-4 py-2">
+                            <Skeleton className="h-7 w-3/4 rounded-md" />
+                            <Skeleton className="h-4 w-full rounded-md" />
+                            <Skeleton className="h-4 w-5/6 rounded-md" />
+                            <Skeleton className="h-4 w-2/3 rounded-md" />
+                          </div>
+                        </div>
+                      ))}
+                    </SkeletonStatus>
                   )}
                   {!updatesLoading &&
                     !updatesError &&

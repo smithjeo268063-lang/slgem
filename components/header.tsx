@@ -2,6 +2,7 @@
 
 import { AnimatePresence, motion } from "framer-motion";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -78,13 +79,29 @@ const Header = () => {
             : "bg-transparent backdrop-blur-0 lg:h-24"
         }`}
       >
-        <div className="flex h-full items-center justify-between px-4.5 lg:px-20">
+        <div className="flex h-full items-center justify-between pr-4.5 pl-3 lg:pr-20 lg:pl-10">
           <Link
             href="/"
             onClick={closeMenus}
-            className={`shrink-0 lg:text-4xl text-2xl font-extrabold  transition-colors duration-300 ${textColor}`}
+            aria-label="SLGEM home"
+            className="relative h-10 w-10 scale-x-[1.2] shrink-0 lg:h-12 lg:w-[190px]"
           >
-            LOGO
+            <Image
+              src="/images/LOGO%201.png"
+              alt="SLGEM"
+              fill
+              priority
+              sizes="(max-width: 1023px) 40px, 190px"
+              className="object-contain lg:hidden"
+            />
+            <Image
+              src="/images/HORIZONTAL%20MAIN.png"
+              alt="SLGEM"
+              fill
+              priority
+              sizes="190px"
+              className="hidden object-contain lg:block"
+            />
           </Link>
 
           <div className="flex gap-16">

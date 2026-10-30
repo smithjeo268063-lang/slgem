@@ -5,6 +5,7 @@ import Link from "next/link";
 import type { ApiRecord } from "@/lib/api";
 import { getRecordImage, getRecordTitle } from "@/lib/api";
 import { useApiData } from "@/lib/use-api";
+import { Skeleton, SkeletonStatus } from "@/components/skeleton-loader";
 
 export default function MissionUpdateList() {
   const { data: updates, error, isLoading } =
@@ -17,7 +18,24 @@ export default function MissionUpdateList() {
           Mission updates could not be loaded: {error}
         </p>
       )}
-      {isLoading && <p role="status">Loading mission updates...</p>}
+      {isLoading && (
+        <SkeletonStatus label="Loading mission updates" className="mt-6 grid gap-8">
+          {[0, 1].map((item) => (
+            <div
+              key={item}
+              className="grid gap-5 border-b border-black/30 pb-8 sm:grid-cols-[minmax(0,0.8fr)_minmax(0,1fr)] sm:gap-8"
+            >
+              <Skeleton className="h-[220px] w-full rounded-2xl sm:h-[260px]" />
+              <div className="space-y-4 py-2">
+                <Skeleton className="h-8 w-3/4 rounded-md" />
+                <Skeleton className="h-4 w-full rounded-md" />
+                <Skeleton className="h-4 w-5/6 rounded-md" />
+                <Skeleton className="h-4 w-1/3 rounded-md" />
+              </div>
+            </div>
+          ))}
+        </SkeletonStatus>
+      )}
       <div className="mt-6 grid gap-8">
         {(updates ?? []).map((update, index) => {
           const title = getRecordTitle(update);

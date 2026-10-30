@@ -48,20 +48,20 @@ const missionItems: MissionItem[] = [
       "We stand in prayer for individuals, communities, churches, and nations. Through focused intercession, we seek God's guidance, strength, and intervention as we fulfil our assignment to share the gospel and serve others.",
     image: "/images/mission/the_mission.jpg",
   },
-  //   {
-  //     id: "06",
-  //     title: "Children & Teens Outreach",
-  //     description:
-  //       "We reach children and teenagers with the message of Jesus Christ through age-appropriate teaching, outreach, discipleship, and practical support. Our desire is to help the next generation grow in faith and build a lasting relationship with God.",
-  //     image: "/images/mission/the_event.jpg",
-  //   },
-  //   {
-  //     id: "07",
-  //     title: "Believers Bible Institute",
-  //     description:
-  //       "We equip believers with biblical knowledge, spiritual understanding, and practical ministry skills. Through sound teaching and intentional training, we prepare people to live out their faith and serve effectively in God's work.",
-  //     image: "/images/mission/the_event.jpg",
-  //   },
+  {
+    id: "06",
+    title: "Children & Teens Outreach",
+    description:
+      "We reach children and teenagers with the message of Jesus Christ through age-appropriate teaching, outreach, discipleship, and practical support. Our desire is to help the next generation grow in faith and build a lasting relationship with God.",
+    image: "/images/mission/the_event.jpg",
+  },
+  {
+    id: "07",
+    title: "Believers Bible Institute",
+    description:
+      "We equip believers with biblical knowledge, spiritual understanding, and practical ministry skills. Through sound teaching and intentional training, we prepare people to live out their faith and serve effectively in God's work.",
+    image: "/images/mission/the_event.jpg",
+  },
 ];
 
 const evangelismMobileDescription =
@@ -239,27 +239,7 @@ export default function What_We_Do() {
           null}
 
         {missionItems.length > 0 &&
-          [
-            ...missionItems,
-            {
-              id: "05",
-              title: "Intercessory Assignments",
-              description: missionItems[0].description,
-              image: "/images/mission/the_mission.jpg",
-            },
-            {
-              id: "06",
-              title: "Children & Teens Outreach",
-              description: missionItems[1].description,
-              image: "/images/mission/the_event.jpg",
-            },
-            {
-              id: "07",
-              title: "Believers Bible Institute",
-              description: missionItems[1].description,
-              image: "/images/mission/the_event.jpg",
-            },
-          ].map((item, index, items) => {
+          missionItems.map((item, index, items) => {
             const isActive = mobileActiveIndex === index;
 
             return (

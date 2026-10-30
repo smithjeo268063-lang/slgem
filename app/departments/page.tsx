@@ -7,6 +7,7 @@ import VisionarySection from "@/components/vision-section";
 import type { ApiRecord } from "@/lib/api";
 import { getRecordImage, getRecordTitle } from "@/lib/api";
 import { useApiData } from "@/lib/use-api";
+import { Skeleton, SkeletonStatus } from "@/components/skeleton-loader";
 
 const partnerCardReveal = (index: number) => ({
   initial: { opacity: 0, y: 36, scale: 0.94 },
@@ -85,9 +86,22 @@ const DepartmentsPage = () => {
               </p>
             )}
             {isLoading && (
-              <p role="status" className="border-b border-[#1A1A1A] py-6">
-                Loading departments...
-              </p>
+              <SkeletonStatus label="Loading departments">
+                {[0, 1].map((item) => (
+                  <div
+                    key={item}
+                    className="flex w-full flex-col gap-4 border-b border-[#1A1A1A] py-6 sm:gap-6 sm:py-8 lg:flex-row lg:items-center lg:gap-[6%] lg:py-[50px]"
+                  >
+                    <Skeleton className="h-[190px] w-full rounded-[22px] sm:h-[240px] lg:h-[290px] lg:w-[36%] lg:rounded-[36px]" />
+                    <div className="flex w-full flex-col gap-4 lg:w-[60%]">
+                      <Skeleton className="h-8 w-3/4 rounded-md" />
+                      <Skeleton className="h-4 w-full rounded-md" />
+                      <Skeleton className="h-4 w-5/6 rounded-md" />
+                      <Skeleton className="h-4 w-1/4 rounded-md" />
+                    </div>
+                  </div>
+                ))}
+              </SkeletonStatus>
             )}
             {(departments ?? []).map((department, index) => {
               const title = getRecordTitle(department);

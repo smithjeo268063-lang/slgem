@@ -8,6 +8,7 @@ import Image from "next/image";
 import type { ApiMission } from "@/lib/api";
 import { getRecordImage, getRecordTitle } from "@/lib/api";
 import { useApiData } from "@/lib/use-api";
+import { Skeleton, SkeletonStatus } from "@/components/skeleton-loader";
 
 function truncateWords(text: string | undefined, limit: number) {
   if (!text) return "";
@@ -79,7 +80,19 @@ export default function MissionCarousel() {
             : "flex-wrap justify-center"
         }`}
       >
-        {(missions ?? []).map((mission, index) => (
+        {isLoading ? (
+          <SkeletonStatus
+            label="Loading mission campaigns"
+            className="contents"
+          >
+            {[0, 1].map((item) => (
+              <Skeleton
+                key={item}
+                className="h-[340px] w-full flex-none rounded-[17px] sm:w-[calc(50%-9px)] sm:max-w-[700px] lg:h-[380px]"
+              />
+            ))}
+          </SkeletonStatus>
+        ) : (missions ?? []).map((mission, index) => (
           <Link
             key={mission?.id ?? mission?.slug ?? index}
             href={`/mission/${mission?.slug ?? mission?.id ?? ""}`}
@@ -133,11 +146,6 @@ export default function MissionCarousel() {
       {error && (
         <p role="alert" className="mx-auto mt-5 max-w-4xl px-5 text-red-700">
           Mission campaigns could not be loaded: {error}
-        </p>
-      )}
-      {isLoading && (
-        <p role="status" className="mx-auto mt-5 max-w-4xl px-5">
-          Loading mission campaigns...
         </p>
       )}
     </motion.section>

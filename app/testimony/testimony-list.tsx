@@ -2,6 +2,7 @@
 
 import { useApiData } from "@/lib/use-api";
 import type { ApiTestimony } from "@/lib/api";
+import { Skeleton, SkeletonStatus } from "@/components/skeleton-loader";
 
 export default function TestimonyList() {
   const { data: testimonies, error, isLoading } =
@@ -33,9 +34,23 @@ export default function TestimonyList() {
         </p>
       )}
       {isLoading && (
-        <p role="status" className="mt-6 text-[#59625c]">
-          Loading testimonies...
-        </p>
+        <SkeletonStatus
+          label="Loading testimonies"
+          className="mt-8 grid gap-5 lg:grid-cols-2"
+        >
+          {[0, 1].map((item) => (
+            <div
+              key={item}
+              className="flex min-h-[230px] flex-col rounded-[24px] bg-[#F1F2F5] p-6 sm:p-8"
+            >
+              <Skeleton className="h-10 w-10 rounded-full" />
+              <Skeleton className="mt-5 h-4 w-full rounded-md" />
+              <Skeleton className="mt-3 h-4 w-5/6 rounded-md" />
+              <Skeleton className="mt-3 h-4 w-2/3 rounded-md" />
+              <Skeleton className="mt-auto h-4 w-1/3 rounded-md" />
+            </div>
+          ))}
+        </SkeletonStatus>
       )}
       {!isLoading && !error && approvedTestimonies.length === 0 && (
         <p className="mt-6 rounded-2xl bg-[#F1F2F5] p-6 text-[#59625c]">
