@@ -1,27 +1,105 @@
 import Image from "next/image";
 import { notFound } from "next/navigation";
-import { apiGet, ApiError } from "@/lib/api";
+import { cache } from "react";
+import {
+  apiGet,
+  ApiError,
+  getRecordSeoMetadata,
+} from "@/lib/api";
+import type { ApiRecord, ApiSeoFields } from "@/lib/api";
 
 export const instant = false;
 
 type MissionGallery = {
+  seo_title?: string | null;
+  seo_image?: string | null;
+  seo_description?: string | null;
   id?: number;
   image_urls?: string[];
-  mission?: { id?: number; title?: string; image?: string };
+  mission?: ApiRecord;
 };
 
 type EventGallery = {
+  seo_title?: string | null;
+  seo_image?: string | null;
+  seo_description?: string | null;
   id?: number;
   image_urls?: string[];
-  event?: { id?: number; title?: string; image?: string };
+  event?: ApiRecord;
 };
 
 type MissionGalleryResponse = MissionGallery[];
-type EventGalleryDetail = {
+type EventGalleryDetail = ApiSeoFields & {
   title?: string;
+  image?: string;
+  description?: string;
   gallery?: EventGallery[];
 };
 type EventGalleryResponse = EventGallery[] | EventGalleryDetail;
+
+const getPhotoGallery = cache(
+  async (slug: string, galleryType: "missions" | "events") => {
+    let title = "";
+    let heroImage = "";
+    let photos: string[] = [];
+    let seoRecord: ApiSeoFields & Partial<ApiRecord> = {};
+
+    if (galleryType === "missions") {
+      const galleries = await apiGet<MissionGalleryResponse>(
+        `/gallery/missions/${encodeURIComponent(slug)}`,
+      );
+      const gallery = galleries?.[0];
+      title = gallery?.mission?.title ?? "";
+      photos = gallery?.image_urls ?? [];
+      heroImage = gallery?.mission?.image ?? photos[0] ?? "";
+      seoRecord = gallery?.mission ?? gallery ?? {};
+    } else {
+      const response = await apiGet<EventGalleryResponse>(
+        `/gallery/events/${encodeURIComponent(slug)}`,
+      );
+      if (Array.isArray(response)) {
+        const gallery = response[0];
+        title = gallery?.event?.title ?? "";
+        photos = gallery?.image_urls ?? [];
+        heroImage = gallery?.event?.image ?? photos[0] ?? "";
+        seoRecord = gallery?.event ?? gallery ?? {};
+      } else {
+        title = response?.title ?? "";
+        const galleries = response?.gallery ?? [];
+        photos = galleries.flatMap((entry) => entry?.image_urls ?? []);
+        heroImage =
+          galleries.find((entry) => entry?.event?.image)?.event?.image ??
+          photos[0] ??
+          "";
+        seoRecord = response;
+      }
+    }
+
+    return { title, heroImage, photos, seoRecord };
+  },
+);
+
+export async function generateMetadata({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ title: string }>;
+  searchParams: Promise<{ gallery?: string }>;
+}) {
+  const [{ title: slug }, query] = await Promise.all([params, searchParams]);
+  const galleryType = query.gallery === "missions" ? "missions" : "events";
+  try {
+    const gallery = await getPhotoGallery(slug, galleryType);
+    return getRecordSeoMetadata({
+      ...gallery.seoRecord,
+      title: gallery.seoRecord.title || gallery.title,
+      image: gallery.seoRecord.image || gallery.heroImage,
+    });
+  } catch (error) {
+    if (error instanceof ApiError && error.statusCode === 404) return {};
+    throw error;
+  }
+}
 
 export default async function PhotoExcerptPage({
   params,
@@ -33,43 +111,15 @@ export default async function PhotoExcerptPage({
   const [{ title: slug }, query] = await Promise.all([params, searchParams]);
   const galleryType = query.gallery === "missions" ? "missions" : "events";
 
-  let title = "";
-  let heroImage = "";
-  let photos: string[] = [];
-
+  let gallery;
   try {
-    if (galleryType === "missions") {
-      const galleries = await apiGet<MissionGalleryResponse>(
-        `/gallery/missions/${encodeURIComponent(slug)}`,
-      );
-      const gallery = galleries?.[0];
-      title = gallery?.mission?.title ?? "";
-      photos = gallery?.image_urls ?? [];
-      heroImage = gallery?.mission?.image ?? photos[0] ?? "";
-    } else {
-      const response = await apiGet<EventGalleryResponse>(
-        `/gallery/events/${encodeURIComponent(slug)}`,
-      );
-      if (Array.isArray(response)) {
-        const gallery = response[0];
-        title = gallery?.event?.title ?? "";
-        photos = gallery?.image_urls ?? [];
-        heroImage = gallery?.event?.image ?? photos[0] ?? "";
-      } else {
-        title = response?.title ?? "";
-        const galleries = response?.gallery ?? [];
-        photos = galleries.flatMap((entry) => entry?.image_urls ?? []);
-        heroImage =
-          galleries.find((entry) => entry?.event?.image)?.event?.image ??
-          photos[0] ??
-          "";
-      }
-    }
+    gallery = await getPhotoGallery(slug, galleryType);
   } catch (error) {
     if (error instanceof ApiError && error.statusCode === 404) notFound();
     throw error;
   }
 
+  const { title, heroImage, photos } = gallery;
   if (!title && photos.length === 0) notFound();
 
   return (

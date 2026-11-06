@@ -3,6 +3,9 @@
 import NextImage from "next/image";
 import { motion } from "framer-motion";
 import Link from "next/link";
+import { useEffect } from "react";
+import type { AdminSettings } from "@/lib/admin-settings";
+import { useApiData } from "@/lib/use-api";
 
 const partnerCardReveal = (index: number) => ({
   initial: { opacity: 0, y: 36, scale: 0.94 },
@@ -16,6 +19,15 @@ const partnerCardReveal = (index: number) => ({
 });
 
 export default function VisionarySection() {
+  const { data: settings, error } =
+    useApiData<AdminSettings>("/admin-settings");
+
+  useEffect(() => {
+    if (error) {
+      console.error("[Admin settings] Unable to load the vision image:", error);
+    }
+  }, [error]);
+
   return (
     <main>
       <section className="mx-auto mt-10 md:mt-16 grid w-full max-w-[1440px] gap-8 sm:mt-24 sm:gap-10 lg:mt-30 lg:grid-cols-[0.95fr_1.05fr] lg:gap-5">
@@ -31,11 +43,11 @@ export default function VisionarySection() {
         </div>
         <div className="h-[200px] w-full overflow-hidden rounded-[20px] sm:h-[280px] sm:rounded-[32px] lg:h-[460px] lg:rounded-[50px]">
           <NextImage
-            src="/images/media/media_hero.jpg"
+            src={settings?.cta_image || "/images/media/media_hero.jpg"}
             alt="SLGEM Media"
             width={1920}
             height={1080}
-            className="h-full w-full object-cover"
+            className="h-full w-full object-cover object-top"
           />
         </div>
       </section>
@@ -47,9 +59,11 @@ export default function VisionarySection() {
           transition={{ duration: 0.8, delay: 0.12, ease: [0.22, 1, 0.36, 1] }}
           className="pointer-events-none absolute left-[2%] top-[12%] hidden w-[290px] -rotate-[-60deg] overflow-hidden rounded-[26px] sm:block md:left-[-2%] md:top-[20%] md:w-[300px] lg:h-[190px] lg:w-[210px]"
         >
-          <img
+          <NextImage
             src="/images/partner/vision1.jpg"
             alt=""
+            width={500}
+            height={390}
             className="aspect-[1.28/1] h-full w-full object-cover"
           />
         </motion.div>
@@ -60,9 +74,11 @@ export default function VisionarySection() {
           transition={{ duration: 0.8, delay: 0.24, ease: [0.22, 1, 0.36, 1] }}
           className="pointer-events-none absolute right-[3%] top-[12%] hidden w-[280px] rotate-[-60deg] overflow-hidden rounded-[26px] sm:block md:right-[-2%] md:top-[19%] md:w-[290px] lg:h-[190px] lg:w-[210px]"
         >
-          <img
+          <NextImage
             src="/images/partner/vision2.jpg"
             alt=""
+            width={500}
+            height={410}
             className="aspect-[1.22/1] h-full w-full object-cover"
           />
         </motion.div>
@@ -73,9 +89,11 @@ export default function VisionarySection() {
           transition={{ duration: 0.8, delay: 0.36, ease: [0.22, 1, 0.36, 1] }}
           className="pointer-events-none absolute bottom-[11%] left-[22%] hidden w-[290px] -rotate-[30deg] overflow-hidden rounded-[26px] sm:block md:bottom-[10%] md:left-[18%] md:w-[300px] lg:h-[190px] lg:w-[210px]"
         >
-          <img
-            src="/images/partner/vision1.jpg"
+          <NextImage
+            src={settings?.cta_image || "/images/partner/vision1.jpg"}
             alt=""
+            width={500}
+            height={390}
             className="aspect-[1.28/1] h-full w-full object-cover"
           />
         </motion.div>
@@ -86,9 +104,11 @@ export default function VisionarySection() {
           transition={{ duration: 0.8, delay: 0.48, ease: [0.22, 1, 0.36, 1] }}
           className="pointer-events-none absolute bottom-[11%] right-[21%] hidden w-[320px] rotate-[36deg] overflow-hidden rounded-[26px] sm:block md:bottom-[10%] md:right-[19%] md:w-[330px] lg:h-[190px] lg:w-[210px]"
         >
-          <img
-            src="/images/partner/vision1.jpg"
+          <NextImage
+            src={settings?.cta_image || "/images/partner/vision1.jpg"}
             alt=""
+            width={500}
+            height={390}
             className="aspect-[1.28/1] h-full w-full object-cover"
           />
         </motion.div>
@@ -107,17 +127,16 @@ export default function VisionarySection() {
             <br className="hidden lg:block" /> All that matters is souls. Will
             you be part of it?
           </p>
-          <a
+          <Link
             href="/partner"
             className="mt-7 inline-flex h-[54px] w-full max-w-[200px] items-center justify-center rounded-[20px] bg-[#100052] px-8 py-4 text-[18px] font-semibold text-white transition-colors duration-200 hover:bg-[#1d0875] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#100052]/30 sm:mt-2 sm:min-h-[55px] sm:rounded-[22px]"
           >
             Partner with Us
-          </a>
+          </Link>
         </motion.div>
       </section>
 
       <motion.section className="mt-10 w-full block lg:hidden bg-white lg:my-10">
-        
         <div className="relative mx-auto flex min-h-[400px] w-full max-w-[1554px] flex-col justify-end overflow-hidden rounded-[32px] bg-[#fff8f7] px-4 pb-12 pt-16 sm:rounded-[40px] lg:px-14 lg:pb-14 lg:min-h-[700px] lg:rounded-[32px] ">
           <div className="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between lg:gap-10">
             <div className="w-full lg:w-[55%]">

@@ -1,11 +1,40 @@
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { apiGet, ApiError, getRecordImage, getRecordTitle } from "@/lib/api";
+import { cache } from "react";
+import {
+  apiGet,
+  ApiError,
+  getRecordImage,
+  getRecordSeoMetadata,
+  getRecordTitle,
+} from "@/lib/api";
 import type { ApiRecord } from "@/lib/api";
 import VisionarySection from "@/components/vision-section";
 
 export const instant = false;
+
+const getPartner = cache((title: string) =>
+  apiGet<ApiRecord>(`/partners/${encodeURIComponent(title)}`),
+);
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ title: string }>;
+}) {
+  const { title } = await params;
+  try {
+    return getRecordSeoMetadata(await getPartner(title));
+  } catch (error) {
+    if (error instanceof ApiError && error.statusCode === 404) return {};
+    console.error(
+      `[Partner metadata] Unable to load partner "${title}":`,
+      error,
+    );
+    return {};
+  }
+}
 
 export default async function PartnerDetailPage({
   params,
@@ -15,17 +44,14 @@ export default async function PartnerDetailPage({
   const { title } = await params;
   let partner: ApiRecord;
   try {
-    partner = await apiGet<ApiRecord>(`/partners/${encodeURIComponent(title)}`);
+    partner = await getPartner(title);
   } catch (error) {
     if (error instanceof ApiError && error.statusCode === 404) notFound();
 
-    console.error(
-      `[Partner detail] Unable to load partner "${title}":`,
-      error,
-    );
+    console.error(`[Partner detail] Unable to load partner "${title}":`, error);
 
     return (
-      <main className="mx-auto w-full max-w-[1440px] px-5 pb-20 pt-24 sm:px-8 lg:px-20 lg:pt-32">
+      <main className="mx-auto w-full max-w-[1440px] px-5 pb-20 pt-12 sm:px-8 lg:px-20 lg:pt-32">
         <Link
           href="/partner"
           className="text-sm font-bold uppercase text-[#4C4C4C] hover:text-black"
@@ -51,13 +77,13 @@ export default async function PartnerDetailPage({
   const image = getRecordImage(partner);
 
   return (
-    <main className="mx-auto w-full max-w-[1440px] px-5 pb-20 pt-24 sm:px-8 lg:px-20 lg:pt-32">
-      <Link
+    <main className="mx-auto w-full max-w-[1440px] px-5 pb-20 pt-12 sm:px-8 lg:px-20 lg:pt-32">
+      {/* <Link
         href="/partner"
         className="text-sm font-bold uppercase text-[#4C4C4C] hover:text-black"
       >
         Back to partners
-      </Link>
+      </Link> */}
       <h1 className="mt-8 text-[36px] font-bold leading-tight sm:text-[56px] lg:text-[76px]">
         {partnerTitle}
       </h1>

@@ -1,4 +1,15 @@
-export const API_BASE_URL = "https://logistics.fadawebs.com/api";
+import type { Metadata } from "next";
+
+const API_ORIGIN = (
+  process.env.NEXT_PUBLIC_API_BASE_URL ?? "https://slgem.fadawebs.com"
+).replace(/\/+$/, "");
+export const API_BASE_URL = `${API_ORIGIN}/api`;
+
+export type ApiSeoFields = {
+  seo_title?: string | null;
+  seo_image?: string | null;
+  seo_description?: string | null;
+};
 
 type ApiEnvelope<T> = {
   status?: boolean;
@@ -7,7 +18,7 @@ type ApiEnvelope<T> = {
   errors?: Record<string, string[]>;
 };
 
-export type ApiRecord = {
+export type ApiRecord = ApiSeoFields & {
   id?: number;
   slug?: string;
   title?: string;
@@ -69,7 +80,7 @@ export type ApiMission = ApiRecord & {
   };
 };
 
-export type ApiMissionUpdate = {
+export type ApiMissionUpdate = ApiSeoFields & {
   id?: number;
   slug?: string;
   title?: string;
@@ -82,6 +93,40 @@ export type ApiMissionUpdate = {
   testimony_content?: string;
   looking_ahead?: string;
 };
+
+export function getRecordSeoMetadata(
+  record: ApiSeoFields &
+    Partial<
+      Pick<
+        ApiRecord,
+        "title" | "name" | "description" | "image" | "banner_image"
+      >
+    >,
+): Metadata {
+  const title = record.seo_title || record.title || record.name;
+  const description = record.seo_description || record.description;
+  const image = record.seo_image || record.banner_image || record.image;
+
+  return {
+    ...(title ? { title } : {}),
+    ...(description ? { description } : {}),
+    ...(title || description || image
+      ? {
+          openGraph: {
+            ...(title ? { title } : {}),
+            ...(description ? { description } : {}),
+            ...(image ? { images: [image] } : {}),
+          },
+          twitter: {
+            card: image ? "summary_large_image" : "summary",
+            ...(title ? { title } : {}),
+            ...(description ? { description } : {}),
+            ...(image ? { images: [image] } : {}),
+          },
+        }
+      : {}),
+  };
+}
 
 export type ApiMissionWithUpdates = ApiRecord & {
   updates?: ApiMissionUpdate[];

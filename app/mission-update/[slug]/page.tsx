@@ -1,7 +1,7 @@
 import Image from "next/image";
-import Link from "next/link";
 import { notFound } from "next/navigation";
-import { apiGet } from "@/lib/api";
+import { cache } from "react";
+import { apiGet, getRecordSeoMetadata } from "@/lib/api";
 import type {
   ApiMission,
   ApiMissionUpdate,
@@ -10,12 +10,7 @@ import type {
 
 export const instant = false;
 
-export default async function MissionUpdatePage({
-  params,
-}: {
-  params: Promise<{ slug: string }>;
-}) {
-  const { slug: updateSlug } = await params;
+const getMissionUpdate = cache(async (updateSlug: string) => {
   const missions = await apiGet<ApiMission[]>("/missions");
   const missionUpdates = await Promise.all(
     (missions ?? [])
@@ -34,14 +29,39 @@ export default async function MissionUpdatePage({
         return update ? { missionSlug: mission.slug, update } : null;
       }),
   );
-  const match = missionUpdates.find(
+  return missionUpdates.find(
     (result): result is { missionSlug: string; update: ApiMissionUpdate } =>
       result !== null,
   );
+});
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = await params;
+  const match = await getMissionUpdate(slug);
+  return match
+    ? getRecordSeoMetadata({
+        ...match.update,
+        description: match.update.mission_update,
+        image: match.update.hero_image,
+      })
+    : {};
+}
+
+export default async function MissionUpdatePage({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug: updateSlug } = await params;
+  const match = await getMissionUpdate(updateSlug);
 
   if (!match) notFound();
 
-  const { missionSlug, update } = match;
+  const { update } = match;
   const date = update.date
     ? new Date(update.date).toLocaleDateString("en", {
         year: "numeric",

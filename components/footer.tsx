@@ -1,9 +1,14 @@
-"use client";
-
 import Link from "next/link";
 import Image from "next/image";
+import type { AdminSettings } from "@/lib/admin-settings";
 
-const footerColumns = [
+type FooterLink = {
+  label: string;
+  href: string;
+  external?: boolean;
+};
+
+const footerColumns: { title: string; links: FooterLink[] }[] = [
   {
     title: "{ HOME }",
     links: [
@@ -30,16 +35,41 @@ const footerColumns = [
   },
   {
     title: "{ FOLLOW US }",
-    links: [
-      { label: "Instagram", href: "#" },
-      { label: "YouTube", href: "#" },
-      { label: "Facebook", href: "#" },
-      { label: "Twitter", href: "#" },
-    ],
+    links: [],
   },
 ];
 
-export default function Footer() {
+function getSocialLinks(socialLinks: AdminSettings["social_links"] = {}) {
+  return Object.entries(socialLinks).flatMap(([name, value]) => {
+    let href = value.trim();
+    if (!href) return [];
+
+    href = href.replace(/^(https?)\./i, "$1://");
+    if (!/^https?:\/\//i.test(href)) href = `https://${href}`;
+
+    try {
+      const url = new URL(href);
+      if (url.protocol !== "http:" && url.protocol !== "https:") return [];
+    } catch {
+      return [];
+    }
+
+    const label =
+      name.toLowerCase() === "whatsapp"
+        ? "WhatsApp"
+        : `${name.charAt(0).toUpperCase()}${name.slice(1)}`;
+    return [{ label, href, external: true }];
+  });
+}
+
+export default function Footer({ settings }: { settings?: AdminSettings }) {
+  const columns = footerColumns.map((column) =>
+    column.title === "{ FOLLOW US }"
+      ? { ...column, links: getSocialLinks(settings?.social_links) }
+      : column,
+  );
+  const siteName = settings?.site_name || "SLGEM";
+
   return (
     <footer className="w-full overflow-hidden bg-[#111725] text-[#FFF9F8]">
       {/* =========================
@@ -69,21 +99,27 @@ export default function Footer() {
           <div className="max-w-[470px]">
             <Link
               href="/"
-              aria-label="SLGEM home"
+              aria-label={`${siteName} home`}
               className="relative block h-16 w-16"
             >
               <Image
                 src="/images/COLOURED%20ICON%20WHITE%20FILL.png"
-                alt="SLGEM"
+                alt={siteName}
                 fill
                 sizes="64px"
                 className="object-contain"
               />
             </Link>
+            {settings?.site_tagline && (
+              <p className="mt-3 text-sm font-semibold tracking-wide">
+                {settings.site_tagline}
+              </p>
+            )}
 
             <div className="mt-[15px] lg:mt-[25px]">
-              <p
-                className="
+              {settings?.office_address && (
+                <p
+                  className="
                   m-0
                   max-w-[430px]
                   text-[17px]
@@ -91,27 +127,14 @@ export default function Footer() {
                   leading-[1.45]
                   tracking-[1px]
                 "
-              >
-                Ancestra Heritage Association 17 Willow
-                <br />
-                Lane,
-              </p>
+                >
+                  {settings.office_address}
+                </p>
+              )}
 
-              <p
-                className="
-                  m-0
-                  mt-[4px]
-                  text-[16px]
-                  font-normal
-                  leading-[1.45]
-                  tracking-[1px]
-                "
-              >
-                Edinburgh, EH2 4AB, United Kingdom
-              </p>
-
-              <p
-                className="
+              {settings?.contact_phone && (
+                <p
+                  className="
                   m-0
                   mt-[19px]
                   text-[16px]
@@ -119,12 +142,16 @@ export default function Footer() {
                   leading-[1.45]
                   tracking-[-0.3px]
                 "
-              >
-                +1 212 425 8617
-              </p>
+                >
+                  <a href={`tel:${settings.contact_phone}`}>
+                    {settings.contact_phone}
+                  </a>
+                </p>
+              )}
 
-              <p
-                className="
+              {settings?.contact_email && (
+                <p
+                  className="
                   m-0
                   mt-[18px]
                   text-[16px]
@@ -132,9 +159,12 @@ export default function Footer() {
                   leading-[1.45]
                   tracking-[0.4px]
                 "
-              >
-                information@office.com
-              </p>
+                >
+                  <a href={`mailto:${settings.contact_email}`}>
+                    {settings.contact_email}
+                  </a>
+                </p>
+              )}
             </div>
           </div>
 
@@ -152,7 +182,7 @@ export default function Footer() {
               lg:gap-x-[s30px]
             "
           >
-            {footerColumns.map((column) => (
+            {columns.map((column) => (
               <div key={column.title}>
                 <h3
                   className="
@@ -168,11 +198,14 @@ export default function Footer() {
                 </h3>
 
                 <nav className="mt-[22px] flex flex-col gap-[18px]">
-                  {column.links.map((link) => (
-                    <Link
-                      key={link.label}
-                      href={link.href}
-                      className="
+                  {column.links.map((link) =>
+                    link.external ? (
+                      <a
+                        key={link.label}
+                        href={link.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="
                         w-fit
                         text-[16px]
                         font-normal
@@ -182,10 +215,28 @@ export default function Footer() {
                         duration-300
                         hover:opacity-60
                       "
-                    >
-                      {link.label}
-                    </Link>
-                  ))}
+                      >
+                        {link.label}
+                      </a>
+                    ) : (
+                      <Link
+                        key={link.label}
+                        href={link.href}
+                        className="
+                        w-fit
+                        text-[16px]
+                        font-normal
+                        leading-[1.3]
+                        tracking-[-0.3px]
+                        transition-opacity
+                        duration-300
+                        hover:opacity-60
+                      "
+                      >
+                        {link.label}
+                      </Link>
+                    ),
+                  )}
                 </nav>
               </div>
             ))}
@@ -215,7 +266,7 @@ export default function Footer() {
             tracking-[10px]
           "
         >
-          SLGEM
+          {siteName}
         </div>
       </div>
     </footer>

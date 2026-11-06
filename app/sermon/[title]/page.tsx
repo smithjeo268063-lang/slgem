@@ -1,11 +1,36 @@
 import { Suspense } from "react";
 import { notFound } from "next/navigation";
+import { cache } from "react";
 import MediaDetail from "@/app/sermon/media-sermon-detail";
-import { apiGet, ApiError, getRecordImage, getRecordTitle } from "@/lib/api";
+import {
+  apiGet,
+  ApiError,
+  getRecordImage,
+  getRecordSeoMetadata,
+  getRecordTitle,
+} from "@/lib/api";
 import type { ApiTeaching } from "@/lib/api";
 import { Skeleton, SkeletonStatus } from "@/components/skeleton-loader";
 
 export const instant = false;
+
+const getTeaching = cache((title: string) =>
+  apiGet<ApiTeaching>(`/teachings/${encodeURIComponent(title)}`),
+);
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ title: string }>;
+}) {
+  const { title } = await params;
+  try {
+    return getRecordSeoMetadata(await getTeaching(title));
+  } catch (error) {
+    if (error instanceof ApiError && error.statusCode === 404) return {};
+    throw error;
+  }
+}
 
 async function SermonContent({
   params,
@@ -15,9 +40,7 @@ async function SermonContent({
   const { title } = await params;
   let item: ApiTeaching;
   try {
-    item = await apiGet<ApiTeaching>(
-      `/teachings/${encodeURIComponent(title)}`,
-    );
+    item = await getTeaching(title);
   } catch (error) {
     if (error instanceof ApiError && error.statusCode === 404) notFound();
     throw error;

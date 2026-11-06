@@ -10,6 +10,11 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "logistics.fadawebs.com",
       },
+      {
+        protocol: "https",
+        hostname: "slgem.fadawebs.com",
+        pathname: "/storage/**",
+      },
     ],
   },
   cacheComponents: true,

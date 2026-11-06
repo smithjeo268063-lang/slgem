@@ -1,12 +1,36 @@
 import NextImage from "next/image";
 import { notFound } from "next/navigation";
-
-import { apiGet, ApiError, getRecordImage, getRecordTitle } from "@/lib/api";
+import { cache } from "react";
+import {
+  apiGet,
+  ApiError,
+  getRecordImage,
+  getRecordSeoMetadata,
+  getRecordTitle,
+} from "@/lib/api";
 import type { ApiRecord } from "@/lib/api";
 import DepartmentDonationForm from "./department-donation-form";
 import VisionarySection from "@/components/vision-section";
 
 export const instant = false;
+
+const getDepartment = cache((title: string) =>
+  apiGet<ApiRecord>(`/departments/${encodeURIComponent(title)}`),
+);
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ title: string }>;
+}) {
+  const { title } = await params;
+  try {
+    return getRecordSeoMetadata(await getDepartment(title));
+  } catch (error) {
+    if (error instanceof ApiError && error.statusCode === 404) return {};
+    throw error;
+  }
+}
 
 export default async function DepartmentDetailPage({
   params,
@@ -16,9 +40,7 @@ export default async function DepartmentDetailPage({
   const { title } = await params;
   let department: ApiRecord;
   try {
-    department = await apiGet<ApiRecord>(
-      `/departments/${encodeURIComponent(title)}`,
-    );
+    department = await getDepartment(title);
   } catch (error) {
     if (error instanceof ApiError && error.statusCode === 404) notFound();
     throw error;

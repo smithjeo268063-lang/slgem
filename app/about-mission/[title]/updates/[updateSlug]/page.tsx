@@ -1,10 +1,47 @@
 import Image from "next/image";
-import Link from "next/link";
 import { notFound } from "next/navigation";
-import { apiGet, ApiError } from "@/lib/api";
+import { cache } from "react";
+import { apiGet, ApiError, getRecordSeoMetadata } from "@/lib/api";
 import type { ApiMissionUpdate, ApiMissionWithUpdates } from "@/lib/api";
 
 export const instant = false;
+
+const getMissionRecords = cache((missionSlug: string) =>
+  apiGet<ApiMissionWithUpdates[]>(
+    `/missions/${encodeURIComponent(missionSlug)}/updates`,
+  ),
+);
+
+const getMissionUpdate = cache(
+  async (missionSlug: string, updateSlug: string) => {
+    const missionRecords = await getMissionRecords(missionSlug);
+    const mission = missionRecords?.find(
+      (record) => record?.slug === missionSlug,
+    );
+    return mission?.updates?.find((record) => record?.slug === updateSlug);
+  },
+);
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ title: string; updateSlug: string }>;
+}) {
+  const { title: missionSlug, updateSlug } = await params;
+  try {
+    const update = await getMissionUpdate(missionSlug, updateSlug);
+    return update
+      ? getRecordSeoMetadata({
+          ...update,
+          description: update.mission_update,
+          image: update.hero_image,
+        })
+      : {};
+  } catch (error) {
+    if (error instanceof ApiError && error.statusCode === 404) return {};
+    throw error;
+  }
+}
 
 function UpdateSection({
   title,
@@ -75,20 +112,13 @@ export default async function MissionUpdateDetailPage({
   params: Promise<{ title: string; updateSlug: string }>;
 }) {
   const { title: missionSlug, updateSlug } = await params;
-  let missionRecords: ApiMissionWithUpdates[];
-
+  let update: ApiMissionUpdate | undefined;
   try {
-    missionRecords = await apiGet<ApiMissionWithUpdates[]>(
-      `/missions/${encodeURIComponent(missionSlug)}/updates`,
-    );
+    update = await getMissionUpdate(missionSlug, updateSlug);
   } catch (error) {
     if (error instanceof ApiError && error.statusCode === 404) notFound();
     throw error;
   }
-
-  const update: ApiMissionUpdate | undefined = missionRecords
-    ?.find((record) => record?.slug === missionSlug)
-    ?.updates?.find((record) => record?.slug === updateSlug);
 
   if (!update) notFound();
 

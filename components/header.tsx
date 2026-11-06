@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import type { AdminSettings } from "@/lib/admin-settings";
 
 const navigationLinks = [
   { label: "Home", href: "/" },
@@ -23,7 +24,7 @@ const pageLinks = [
   { label: "Contact Us", href: "/contact" },
 ];
 
-const Header = () => {
+const Header = ({ settings }: { settings?: AdminSettings }) => {
   const pathname = usePathname();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -52,6 +53,7 @@ const Header = () => {
     pathname === "/" ||
     pathname === "/mission" ||
     pathname === "/update" ||
+    pathname === "/partner" ||
     pathname.startsWith("/about-mission/") ||
     pathname === "";
   const isHeaderLight = isScrolled || isMobileMenuOpen || !hasTransparentHero;
@@ -83,12 +85,12 @@ const Header = () => {
           <Link
             href="/"
             onClick={closeMenus}
-            aria-label="SLGEM home"
+            aria-label={`${settings?.site_name || "SLGEM"} home`}
             className="relative h-10 w-10 scale-x-[1.2] shrink-0 lg:h-12 lg:w-[190px]"
           >
             <Image
               src="/images/LOGO%201.png"
-              alt="SLGEM"
+              alt={settings?.site_name || "SLGEM"}
               fill
               priority
               sizes="(max-width: 1023px) 40px, 190px"
@@ -96,7 +98,7 @@ const Header = () => {
             />
             <Image
               src="/images/HORIZONTAL%20MAIN.png"
-              alt="SLGEM"
+              alt={settings?.site_name || "SLGEM"}
               fill
               priority
               sizes="190px"

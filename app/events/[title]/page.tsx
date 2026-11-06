@@ -7,8 +7,15 @@ import {
   UsersRound,
 } from "lucide-react";
 import { notFound } from "next/navigation";
+import { cache } from "react";
 
-import { apiGet, ApiError, getRecordImage, getRecordTitle } from "@/lib/api";
+import {
+  apiGet,
+  ApiError,
+  getRecordImage,
+  getRecordSeoMetadata,
+  getRecordTitle,
+} from "@/lib/api";
 import type { ApiEvent } from "@/lib/api";
 import EventRsvpButton from "./event-rsvp-button";
 import EventSpeakers from "./event-speakers";
@@ -21,6 +28,24 @@ const scheduleCategoryStyles = [
 
 export const instant = false;
 
+const getEvent = cache((title: string) =>
+  apiGet<ApiEvent>(`/events/${encodeURIComponent(title)}`),
+);
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ title: string }>;
+}) {
+  const { title } = await params;
+  try {
+    return getRecordSeoMetadata(await getEvent(title));
+  } catch (error) {
+    if (error instanceof ApiError && error.statusCode === 404) return {};
+    throw error;
+  }
+}
+
 export default async function EventDetailPage({
   params,
 }: {
@@ -29,7 +54,7 @@ export default async function EventDetailPage({
   const { title } = await params;
   let event: ApiEvent;
   try {
-    event = await apiGet<ApiEvent>(`/events/${encodeURIComponent(title)}`);
+    event = await getEvent(title);
   } catch (error) {
     if (error instanceof ApiError && error.statusCode === 404) notFound();
     throw error;

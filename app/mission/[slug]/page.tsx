@@ -1,10 +1,35 @@
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { apiGet, ApiError, getRecordImage, getRecordTitle } from "@/lib/api";
+import { cache } from "react";
+import {
+  apiGet,
+  ApiError,
+  getRecordImage,
+  getRecordSeoMetadata,
+  getRecordTitle,
+} from "@/lib/api";
 import type { ApiMission } from "@/lib/api";
 
 export const instant = false;
+
+const getMission = cache((slug: string) =>
+  apiGet<ApiMission>(`/missions/${encodeURIComponent(slug)}`),
+);
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = await params;
+  try {
+    return getRecordSeoMetadata(await getMission(slug));
+  } catch (error) {
+    if (error instanceof ApiError && error.statusCode === 404) return {};
+    throw error;
+  }
+}
 
 export default async function MissionDetailPage({
   params,
@@ -14,9 +39,7 @@ export default async function MissionDetailPage({
   const { slug } = await params;
   let mission: ApiMission;
   try {
-    mission = await apiGet<ApiMission>(
-      `/missions/${encodeURIComponent(slug)}`,
-    );
+    mission = await getMission(slug);
   } catch (error) {
     if (error instanceof ApiError && error.statusCode === 404) notFound();
     throw error;
